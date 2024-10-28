@@ -1,1 +1,1 @@
-# GDGoC-Website
+# GDGoC-APSIT-Website
