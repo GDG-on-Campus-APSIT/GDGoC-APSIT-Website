@@ -1,9 +1,24 @@
 // controllers/notificationController.js
 const Notification = require('../models/notificationModel');
 
+const logger = require("../config/logger");
+
+
 // Get all notifications
 exports.getAllNotifications = async (req, res) => {
   try {
+    // Log an informational message at the 'info' level
+    // logger.info("This is an info message");
+
+    // Log an error message at the 'error' level
+    // logger.error("This is an error message");
+
+    // Log a warning message at the 'warn' level
+    // logger.warn("This is a warning message");
+
+    // Log a debug message at the 'debug' level
+    // logger.debug("This is a debug message");
+
     const notifications = await Notification.find();
     res.status(200).json({ success: true, data: notifications });
   } catch (error) {
