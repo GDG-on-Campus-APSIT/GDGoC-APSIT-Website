@@ -1,0 +1,95 @@
+Frontend Structure:
+└── frontend
+    ├── .eslintrc.json
+    ├── components.json
+    ├── jsconfig.json
+    ├── next.config.mjs
+    ├── package-lock.json
+    ├── package.json
+    ├── postcss.config.mjs
+    ├── public
+    │   ├── favicon.ico
+    │   ├── gdg-logo.png
+    │   └── placeholder.svg
+    ├── README.md
+    ├── src
+    │   ├── app
+    │   │   ├── blog
+    │   │   │   └── page.js
+    │   │   ├── community
+    │   │   │   └── page.js
+    │   │   ├── contact
+    │   │   │   └── page.js
+    │   │   ├── events
+    │   │   │   └── page.js
+    │   │   ├── fonts
+    │   │   │   ├── GeistMonoVF.woff
+    │   │   │   └── GeistVF.woff
+    │   │   ├── get-involved
+    │   │   │   └── page.js
+    │   │   ├── globals.css
+    │   │   ├── layout.js
+    │   │   ├── page.js
+    │   │   ├── profile
+    │   │   │   └── page.js
+    │   │   ├── recognition
+    │   │   │   └── page.js
+    │   │   └── resources
+    │   │       └── page.js
+    │   ├── components
+    │   │   ├── blog-page.jsx
+    │   │   ├── community-page.jsx
+    │   │   ├── contact-page.jsx
+    │   │   ├── events-page.jsx
+    │   │   ├── get-involved-page.jsx
+    │   │   ├── homepage.jsx
+    │   │   ├── navbar.jsx
+    │   │   ├── profile-page.jsx
+    │   │   ├── recognition-page.jsx
+    │   │   ├── resources-page.jsx
+    │   │   └── ui
+    │   │       ├── accordion.jsx
+    │   │       ├── badge.jsx
+    │   │       ├── button.jsx
+    │   │       ├── calendar.jsx
+    │   │       ├── card.jsx
+    │   │       ├── input.jsx
+    │   │       ├── label.jsx
+    │   │       ├── progress.jsx
+    │   │       ├── select.jsx
+    │   │       ├── sheet.jsx
+    │   │       ├── table.jsx
+    │   │       ├── tabs.jsx
+    │   │       └── textarea.jsx
+    │   └── lib
+    │       └── utils.js
+    └── tailwind.config.js
+
+Backend Structure:
+└── backend
+    ├── .env
+    ├── package-lock.json
+    ├── package.json
+    ├── src
+    │   ├── app.js
+    │   ├── config
+    │   │   └── db.js
+    │   ├── controllers
+    │   │   ├── notificationController.js
+    │   │   └── userController.js
+    │   ├── middleware
+    │   ├── models
+    │   │   ├── achievementModel.js
+    │   │   ├── attendanceModel.js
+    │   │   ├── blogModel.js
+    │   │   ├── eventModel.js
+    │   │   ├── notificationModel.js
+    │   │   ├── resourceModel.js
+    │   │   └── userModel.js
+    │   ├── routes
+    │   │   ├── notificationRoutes.js
+    │   │   └── userRoutes.js
+    │   ├── server.js
+    │   └── swagger.json
+    └── test.js
+

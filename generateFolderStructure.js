@@ -1,10 +1,12 @@
+//Navigate to main folder i.e. repo and run node generateFolderStructure.js
+
 const fs = require('fs');
 const path = require('path');
 const dirTree = require('directory-tree');
 
 const frontendDir = './frontend'; // Path to the frontend directory
 const backendDir = './backend';   // Path to the backend directory
-const outputFile = 'folder_structure.txt'; // Output file
+const outputFile = './docs/folder_structure.txt'; // Output file
 
 // Options for the directory-tree output
 const options = {

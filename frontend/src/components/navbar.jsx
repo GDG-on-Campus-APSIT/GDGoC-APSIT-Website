@@ -1,17 +1,18 @@
 'use client';
 import Link from 'next/link'
-import { AlignJustify, User, X } from 'lucide-react'
+import { AlignJustify, User } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export function NavbarComponent() {
-  //const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-
   const navItems = [
     { name: 'Events', href: '/events' },
-    { name: 'Community', href: '/community' },
     { name: 'Resources', href: '/resources' },
+    { name: 'Community', href: '/community' },
     { name: 'Recognition Program', href: '/recognition' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Get Involved', href: '/get-involved' },
+    { name: 'Contact', href: '/contact' },
   ]
 
   const NavLinks = () => (
@@ -28,7 +29,7 @@ export function NavbarComponent() {
   )
 
   return (
-    (<nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -65,7 +66,6 @@ export function NavbarComponent() {
                         <img className="h-8 w-auto" src="/gdg-logo.png" alt="GDG Logo" />
                         <span className="ml-2 text-xl font-bold text-blue-600">GDGoC APSIT</span>
                       </Link>
-                      
                     </div>
                     <div className="flex flex-col space-y-4 p-4">
                       <NavLinks />
@@ -88,6 +88,6 @@ export function NavbarComponent() {
           </div>
         </div>
       </div>
-    </nav>)
+    </nav>
   );
 }
