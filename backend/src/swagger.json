@@ -1,0 +1,125 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "GDG OC APSIT API",
+    "description": "API documentation for notifications management"
+  },
+  "host": "localhost:5000",
+  "basePath": "/api",
+  "paths": {
+    "/notifications": {
+      "get": {
+        "summary": "Get all notifications",
+        "tags": ["Notifications"],
+        "responses": {
+          "200": {
+            "description": "List of all notifications"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new notification",
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "example": "info" },
+                "message": { "type": "string", "example": "New notification" },
+                "sent_to": { "type": "array", "items": { "type": "string" }, "example": ["user_id1", "user_id2"] }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Notification created successfully"
+          }
+        }
+      }
+    },
+    "/notifications/{id}": {
+      "get": {
+        "summary": "Get a notification by ID",
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the notification to fetch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification data"
+          },
+          "404": {
+            "description": "Notification not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a notification by ID",
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the notification to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string" },
+                "message": { "type": "string" },
+                "sent_to": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification updated successfully"
+          },
+          "404": {
+            "description": "Notification not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a notification by ID",
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the notification to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification deleted successfully"
+          },
+          "404": {
+            "description": "Notification not found"
+          }
+        }
+      }
+    }
+  }
+}

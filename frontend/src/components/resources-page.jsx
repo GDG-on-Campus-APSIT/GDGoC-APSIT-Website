@@ -24,9 +24,9 @@ const learningResources = [
 ]
 
 const projectShowcase = [
-  { title: "AI-powered Chatbot", description: "A chatbot built with natural language processing capabilities.", image: "/placeholder.svg?height=200&width=400", github: "#", demo: "#" },
-  { title: "Smart Home IoT System", description: "An IoT system for controlling home appliances using voice commands.", image: "/placeholder.svg?height=200&width=400", github: "#", demo: "#" },
-  { title: "Blockchain-based Voting App", description: "A secure and transparent voting application using blockchain technology.", image: "/placeholder.svg?height=200&width=400", github: "#", demo: "#" },
+  { title: "AI-powered Chatbot", description: "A chatbot built with natural language processing capabilities.", image: "/placeholder.svg", github: "#", demo: "#" },
+  { title: "Smart Home IoT System", description: "An IoT system for controlling home appliances using voice commands.", image: "/placeholder.svg", github: "#", demo: "#" },
+  { title: "Blockchain-based Voting App", description: "A secure and transparent voting application using blockchain technology.", image: "/placeholder.svg", github: "#", demo: "#" },
 ]
 
 const faqItems = [
