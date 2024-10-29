@@ -1,1 +1,9 @@
-{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/api/notifications\",\"status\":\"304\",\"responseTime\":\"343.170\"}","timestamp":"2024-10-29T15:37:23.251Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/api-docs/\",\"status\":304,\"responseTime\":14.603}","timestamp":"2024-10-29T18:09:06.454Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/api-docs/swagger-ui.css\",\"status\":304,\"responseTime\":10.502}","timestamp":"2024-10-29T18:09:06.560Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/api-docs/swagger-ui-bundle.js\",\"status\":304,\"responseTime\":6.711}","timestamp":"2024-10-29T18:09:06.592Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/api-docs/swagger-ui-standalone-preset.js\",\"status\":304,\"responseTime\":1.619}","timestamp":"2024-10-29T18:09:06.655Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/api-docs/swagger-ui-init.js\",\"status\":200,\"responseTime\":2.107}","timestamp":"2024-10-29T18:09:06.685Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/api-docs/favicon-32x32.png\",\"status\":304,\"responseTime\":0.89}","timestamp":"2024-10-29T18:09:07.067Z"}
+{"level":"info","message":"{\"method\":\"DELETE\",\"url\":\"/api/logs\",\"status\":200,\"responseTime\":26.958}","timestamp":"2024-10-29T18:09:13.728Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/api/logs\",\"status\":200,\"responseTime\":22.847}","timestamp":"2024-10-29T18:09:20.649Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/api/logs\",\"status\":200,\"responseTime\":20.68}","timestamp":"2024-10-29T18:09:27.565Z"}
