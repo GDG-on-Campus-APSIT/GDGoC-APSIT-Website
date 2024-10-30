@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "GDG OC APSIT API",
-    "description": "API documentation for notifications management and logging"
+    "description": "API documentation for notifications management, logging, and achievements"
   },
   "host": "localhost:5000",
   "basePath": "/api",
@@ -157,6 +157,121 @@
           },
           "500": {
             "description": "Error deleting logs"
+          }
+        }
+      }
+    },
+    "/achievements": {
+      "get": {
+        "summary": "Get all achievements",
+        "tags": ["Achievements"],
+        "responses": {
+          "200": {
+            "description": "List of all achievements"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new achievement",
+        "tags": ["Achievements"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "example": "Achievement Name" },
+                "description": { "type": "string", "example": "Achievement Description" },
+                "badge_level": { "type": "integer", "example": 1 },
+                "issued_to": { "type": "array", "items": { "type": "string" }, "example": ["user_id1", "user_id2"] }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Achievement created successfully"
+          }
+        }
+      }
+    },
+    "/achievements/{id}": {
+      "get": {
+        "summary": "Get an achievement by ID",
+        "tags": ["Achievements"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the achievement to fetch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Achievement data"
+          },
+          "404": {
+            "description": "Achievement not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an achievement by ID",
+        "tags": ["Achievements"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the achievement to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "description": { "type": "string" },
+                "badge_level": { "type": "integer" },
+                "issued_to": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Achievement updated successfully"
+          },
+          "404": {
+            "description": "Achievement not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an achievement by ID",
+        "tags": ["Achievements"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the achievement to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Achievement deleted successfully"
+          },
+          "404": {
+            "description": "Achievement not found"
           }
         }
       }
