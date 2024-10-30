@@ -1,0 +1,123 @@
+Frontend Structure:
+└── frontend
+    ├── .eslintrc.json
+    ├── components.json
+    ├── jsconfig.json
+    ├── next.config.mjs
+    ├── package-lock.json
+    ├── package.json
+    ├── postcss.config.mjs
+    ├── public
+    │   ├── favicon.ico
+    │   ├── gdg-logo.png
+    │   └── placeholder.svg
+    ├── README.md
+    ├── src
+    │   ├── app
+    │   │   ├── admin
+    │   │   │   ├── content
+    │   │   │   │   └── page.js
+    │   │   │   ├── events
+    │   │   │   │   └── page.js
+    │   │   │   ├── members
+    │   │   │   │   └── page.js
+    │   │   │   ├── recognition
+    │   │   │   │   └── page.js
+    │   │   │   └── settings
+    │   │   │       └── page.js
+    │   │   ├── blog
+    │   │   │   ├── page.js
+    │   │   │   └── write
+    │   │   │       └── page.js
+    │   │   ├── community
+    │   │   │   └── page.js
+    │   │   ├── contact
+    │   │   │   └── page.js
+    │   │   ├── events
+    │   │   │   └── page.js
+    │   │   ├── fonts
+    │   │   │   ├── GeistMonoVF.woff
+    │   │   │   └── GeistVF.woff
+    │   │   ├── get-involved
+    │   │   │   └── page.js
+    │   │   ├── globals.css
+    │   │   ├── layout.js
+    │   │   ├── page.js
+    │   │   ├── profile
+    │   │   │   └── page.js
+    │   │   ├── recognition
+    │   │   │   └── page.js
+    │   │   └── resources
+    │   │       ├── page.js
+    │   │       └── project
+    │   │           └── submit
+    │   │               └── page.js
+    │   ├── components
+    │   │   ├── blog-page.jsx
+    │   │   ├── blog-submission.jsx
+    │   │   ├── community-page.jsx
+    │   │   ├── contact-page.jsx
+    │   │   ├── content-management.jsx
+    │   │   ├── event-management.jsx
+    │   │   ├── events-page.jsx
+    │   │   ├── get-involved-page.jsx
+    │   │   ├── homepage.jsx
+    │   │   ├── member-management.jsx
+    │   │   ├── navbar.jsx
+    │   │   ├── profile-page.jsx
+    │   │   ├── project-submission.jsx
+    │   │   ├── recognition-management.jsx
+    │   │   ├── recognition-page.jsx
+    │   │   ├── resources-page.jsx
+    │   │   ├── settings.jsx
+    │   │   └── ui
+    │   │       ├── accordion.jsx
+    │   │       ├── badge.jsx
+    │   │       ├── button.jsx
+    │   │       ├── calendar.jsx
+    │   │       ├── card.jsx
+    │   │       ├── dialog.jsx
+    │   │       ├── dropdown-menu.jsx
+    │   │       ├── input.jsx
+    │   │       ├── label.jsx
+    │   │       ├── progress.jsx
+    │   │       ├── select.jsx
+    │   │       ├── separator.jsx
+    │   │       ├── sheet.jsx
+    │   │       ├── switch.jsx
+    │   │       ├── table.jsx
+    │   │       ├── tabs.jsx
+    │   │       └── textarea.jsx
+    │   └── lib
+    │       └── utils.js
+    └── tailwind.config.js
+
+Backend Structure:
+└── backend
+    ├── package-lock.json
+    ├── package.json
+    └── src
+        ├── app.js
+        ├── config
+        │   ├── db.js
+        │   └── logger.js
+        ├── controllers
+        │   ├── logController.js
+        │   ├── notificationController.js
+        │   └── userController.js
+        ├── models
+        │   ├── achievementModel.js
+        │   ├── attendanceModel.js
+        │   ├── blogModel.js
+        │   ├── eventModel.js
+        │   ├── logModel.js
+        │   ├── notificationModel.js
+        │   ├── resourceModel.js
+        │   └── userModel.js
+        ├── routes
+        │   ├── logRoutes.js
+        │   ├── notificationRoutes.js
+        │   └── userRoutes.js
+        ├── server.js
+        └── swagger.json
+

@@ -56,11 +56,14 @@ Frontend Structure:
     │   │   ├── events-page.jsx      // Component to display event information.
     │   │   ├── get-involved-page.jsx // Component for "Get Involved" page layout.
     │   │   ├── homepage.jsx         // Component for homepage layout.
+    │   │   ├── member-management.jsx // Component for member management.
     │   │   ├── navbar.jsx           // Component for navigation bar across pages.
     │   │   ├── profile-page.jsx     // Component for displaying profile information.
     │   │   ├── project-submission.jsx // Component for project submission form.
+    │   │   ├── recognition-management.jsx //Component for recognition management in admin panel
     │   │   ├── recognition-page.jsx // Component for recognition page layout.
     │   │   ├── resources-page.jsx   // Component for listing resources.
+    │   │   ├── settings.jsx         // settings page for admin panel
     │   │   └── ui                   // UI elements to be used across various pages.
     │   │       ├── accordion.jsx    // Accordion component for expandable lists.
     │   │       ├── badge.jsx        // Badge component for labels or notifications.
