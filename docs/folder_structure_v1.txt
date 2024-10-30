@@ -60,16 +60,16 @@ Backend Structure:
     ├── package-lock.json             // Auto-generated file to lock dependencies' versions
     ├── package.json                  // Lists project dependencies and scripts
     └── logs                          // Directory containing application log files
-        ├── app.log                   // Log file where application log entries are recorded
+    │   ├── app.log                   // Log file where application log entries are recorded
     └── src                           // Source folder for backend code
         ├── app.js                    // Main app setup, initializes Express and middleware
         ├── config
         │   └── db.js                 // Database configuration file for connecting to MongoDB
-            └── logger.js             // Configures Winston for logging to console, file, and MongoDB with structured log entries.
+        │   └── logger.js             // Configures Winston for logging to console, file, and MongoDB with structured log entries.
         ├── controllers               // Logic for handling various API requests
         │   ├── notificationController.js // Controller for handling notification actions
         │   └── userController.js     // Controller for handling user-related actions
-            └── logController.js      // Controller for handling log-related actions
+        │   └── logController.js      // Controller for handling log-related actions
         ├── middleware                // Middleware functions for request processing (e.g., auth)
         ├── models                    // Mongoose models defining data structures
         │   ├── achievementModel.js   // Model for achievements and recognitions
@@ -79,11 +79,11 @@ Backend Structure:
         │   ├── notificationModel.js  // Model for notifications
         │   ├── resourceModel.js      // Model for resources in the library
         │   └── userModel.js          // Model for user data and authentication
-            └── logModel.js           // Model for logs
+        │   └── logModel.js           // Model for logs
         ├── routes                    // Routes for handling API requests
         │   ├── notificationRoutes.js // Routes for notifications API
         │   └── userRoutes.js         // Routes for user API
-            └── logRoutes.js          // Routes for log API
+        │   └── logRoutes.js          // Routes for log API
         ├── server.js                 // Server initialization file, starts Express server
         └── swagger.json              // Swagger documentation for API endpoints
     
