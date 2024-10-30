@@ -126,7 +126,7 @@ export function BlogPageComponent() {
           <h2 className="text-3xl font-bold mb-4">Want to Contribute?</h2>
           <p className="text-xl mb-8">Share your knowledge and experiences with our community!</p>
           <Button asChild size="lg" variant="secondary">
-            <Link href="/get-involved">Write a Blog Post</Link>
+            <Link href="/blog/write">Write a Blog Post</Link>
           </Button>
         </div>
       </section>

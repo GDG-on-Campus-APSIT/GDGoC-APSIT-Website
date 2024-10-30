@@ -158,10 +158,10 @@ export function ResourcesPageComponent() {
       {/* Call to Action */}
       <section className="bg-blue-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Learning?</h2>
-          <p className="text-xl mb-8">Explore our resources and take your skills to the next level!</p>
+          <h2 className="text-3xl font-bold mb-4">Built something awesome?</h2>
+          <p className="text-xl mb-8">Share your amazing work with the GDGoC APSIT community!</p>
           <Button asChild size="lg" variant="secondary">
-            <Link href="#learning">Get Started</Link>
+            <Link href="/resources/project/submit">Submit Your Project</Link>
           </Button>
         </div>
       </section>

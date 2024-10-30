@@ -1,0 +1,117 @@
+Frontend Structure:
+└── frontend
+    ├── .eslintrc.json               // Configuration file for ESLint to enforce code quality and standards.
+    ├── components.json              // Lists available components; used for tracking or automated imports.
+    ├── jsconfig.json                // Configuration file for JavaScript settings, like path aliases.
+    ├── next.config.mjs              // Next.js configuration file for environment settings, redirects, etc.
+    ├── package-lock.json            // Locks dependency versions for consistent installs across environments.
+    ├── package.json                 // Defines project metadata, dependencies, and scripts.
+    ├── postcss.config.mjs           // Configures PostCSS for CSS transformations and optimizations.
+    ├── public
+    │   ├── favicon.ico              // Site favicon.
+    │   ├── gdg-logo.png             // Google Developer Group (GDG) logo for branding.
+    │   └── placeholder.svg          // Placeholder SVG image for loading or empty states.
+    ├── README.md                    // Documentation for the project setup, usage, and conventions.
+    ├── src                          // Primary source folder for app code.
+    │   ├── app                      // Contains all the page-specific routes and components.
+    │   │   ├── admin                // Admin-specific routes.
+    │   │   │   ├── content
+    │   │   │   │   └── page.js      // Admin page for managing site content.
+    │   │   │   └── events
+    │   │   │       └── page.js      // Admin page for managing events.
+    │   │   ├── blog                 // Blog section.
+    │   │   │   ├── page.js          // Blog homepage.
+    │   │   │   └── write
+    │   │   │       └── page.js      // Page for blog post submission.
+    │   │   ├── community
+    │   │   │   └── page.js          // Community page.
+    │   │   ├── contact
+    │   │   │   └── page.js          // Contact page.
+    │   │   ├── events
+    │   │   │   └── page.js          // Events listing page.
+    │   │   ├── fonts                // Font files for the application.
+    │   │   │   ├── GeistMonoVF.woff // Font for monospaced text styles.
+    │   │   │   └── GeistVF.woff     // Main font for the app.
+    │   │   ├── get-involved
+    │   │   │   └── page.js          // Get Involved page for users to learn about participation.
+    │   │   ├── globals.css          // Global CSS styles for the app.
+    │   │   ├── layout.js            // Layout component applied across all pages.
+    │   │   ├── page.js              // Default homepage.
+    │   │   ├── profile
+    │   │   │   └── page.js          // Profile page for user info and settings.
+    │   │   ├── recognition
+    │   │   │   └── page.js          // Page for recognizing contributors or members.
+    │   │   └── resources
+    │   │       ├── page.js          // Resources listing page.
+    │   │       └── project
+    │   │           └── submit
+    │   │               └── page.js  // Project submission page for users.
+    │   ├── components               // Reusable UI components.
+    │   │   ├── blog-page.jsx        // Component for displaying blog page content.
+    │   │   ├── blog-submission.jsx  // Component for blog post submissions.
+    │   │   ├── community-page.jsx   // Component for community details.
+    │   │   ├── contact-page.jsx     // Component for contact page layout.
+    │   │   ├── content-management.jsx // Admin component for content management.
+    │   │   ├── event-management.jsx // Admin component for event management.
+    │   │   ├── events-page.jsx      // Component to display event information.
+    │   │   ├── get-involved-page.jsx // Component for "Get Involved" page layout.
+    │   │   ├── homepage.jsx         // Component for homepage layout.
+    │   │   ├── member-management.jsx // Component for member management.
+    │   │   ├── navbar.jsx           // Component for navigation bar across pages.
+    │   │   ├── profile-page.jsx     // Component for displaying profile information.
+    │   │   ├── project-submission.jsx // Component for project submission form.
+    │   │   ├── recognition-management.jsx //Component for recognition management in admin panel
+    │   │   ├── recognition-page.jsx // Component for recognition page layout.
+    │   │   ├── resources-page.jsx   // Component for listing resources.
+    │   │   ├── settings.jsx         // settings page for admin panel
+    │   │   └── ui                   // UI elements to be used across various pages.
+    │   │       ├── accordion.jsx    // Accordion component for expandable lists.
+    │   │       ├── badge.jsx        // Badge component for labels or notifications.
+    │   │       ├── button.jsx       // Reusable button component.
+    │   │       ├── calendar.jsx     // Calendar UI component for date selections.
+    │   │       ├── card.jsx         // Card component for content grouping.
+    │   │       ├── dialog.jsx       // Modal dialog component.
+    │   │       ├── dropdown-menu.jsx // Dropdown menu component.
+    │   │       ├── input.jsx        // Input field component.
+    │   │       ├── label.jsx        // Label component for forms and UI.
+    │   │       ├── progress.jsx     // Progress bar for visual indicators.
+    │   │       ├── select.jsx       // Dropdown select component.
+    │   │       ├── separator.jsx    // Visual separator for dividing content.
+    │   │       ├── sheet.jsx        // Sliding sheet component for mobile.
+    │   │       ├── switch.jsx       // Toggle switch component.
+    │   │       ├── table.jsx        // Table component for displaying tabular data.
+    │   │       ├── tabs.jsx         // Tabs component for navigation.
+    │   │       └── textarea.jsx     // Text area component for multiline input.
+    │   └── lib                      // Utility functions and helpers.
+    │       └── utils.js             // Utility functions for use across components.
+    └── tailwind.config.js           // Tailwind CSS configuration file for styling.
+
+Backend Structure:
+└── backend
+    ├── .env                         // Environment variables, typically for sensitive data like API keys.
+    ├── package-lock.json            // Locks dependency versions for consistency.
+    ├── package.json                 // Lists project metadata, dependencies, and scripts.
+    └── src                          // Main application code.
+        ├── app.js                   // Entry file for initializing the app.
+        ├── config
+        │   ├── db.js                // Database configuration and connection setup.
+        │   └── logger.js            // Logger configuration for tracking and debugging.
+        ├── controllers              // Handles application logic and routes requests to appropriate services.
+        │   ├── logController.js     // Controls logging functionality.
+        │   ├── notificationController.js // Manages notification-related actions.
+        │   └── userController.js    // Handles user-related operations.
+        ├── models                   // Database models defining data schemas.
+        │   ├── achievementModel.js  // Model for storing user achievements.
+        │   ├── attendanceModel.js   // Model for tracking attendance.
+        │   ├── blogModel.js         // Model for blog post data.
+        │   ├── eventModel.js        // Model for event details.
+        │   ├── logModel.js          // Model for logging activities.
+        │   ├── notificationModel.js // Model for notification details.
+        │   ├── resourceModel.js     // Model for resources.
+        │   └── userModel.js         // Model for user data.
+        ├── routes                   // Defines API routes.
+        │   ├── logRoutes.js         // Routes for logging operations.
+        │   ├── notificationRoutes.js // Routes for notifications.
+        │   └── userRoutes.js        // Routes for user-related operations.
+        ├── server.js                // Main server file to start the backend.
+        └── swagger.json             // Swagger documentation for API endpoints.
