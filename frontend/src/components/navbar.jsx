@@ -26,7 +26,7 @@ export function NavbarComponent({ isAdmin = true }) {
   ]
 
   const adminRoutes = [
-    { name: 'Dashboard', href: '/admin' },
+    //{ name: 'Dashboard', href: '/admin' },
     { name: 'Event Management', href: '/admin/events' },
     { name: 'Member Management', href: '/admin/members' },
     { name: 'Content Management', href: '/admin/content' },
