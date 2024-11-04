@@ -1,7 +1,10 @@
 'use client';
+
 import { useState } from 'react'
 import Link from 'next/link'
-import { AlignJustify, User, ChevronDown } from 'lucide-react'
+import Image from 'next/image'
+import { AlignJustify, ChevronDown, LogOut } from 'lucide-react';
+import GoogleIcon from '@mui/icons-material/Google'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import {
@@ -11,9 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
+import { useAuthContext } from "@/context/AuthContext"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function NavbarComponent({ isAdmin = true }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const { user, signInWithGoogle, signOutUser } = useAuthContext()
 
   const navItems = [
     { name: 'Events', href: '/events' },
@@ -26,7 +32,6 @@ export function NavbarComponent({ isAdmin = true }) {
   ]
 
   const adminRoutes = [
-    //{ name: 'Dashboard', href: '/admin' },
     { name: 'Event Management', href: '/admin/events' },
     { name: 'Member Management', href: '/admin/members' },
     { name: 'Content Management', href: '/admin/content' },
@@ -54,7 +59,7 @@ export function NavbarComponent({ isAdmin = true }) {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
-              <img className="h-8 w-auto" src="/gdg-logo.png" alt="GDG Logo" />
+              <Image width={32} height={32} src="/gdg-logo.png" alt="GDG Logo" />
               <span className="ml-2 text-xl font-bold text-blue-600">GDGoC APSIT</span>
             </Link>
           </div>
@@ -84,13 +89,37 @@ export function NavbarComponent({ isAdmin = true }) {
 
           {/* User Profile - Right */}
           <div className="hidden lg:flex items-center h-16">
-            <span className="text-black mr-2">John Doe</span>
-            <Link href="/profile">
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5 text-gray-600" />
-                <span className="sr-only">User profile</span>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-16 flex items-center">
+                    <span className="text-black mr-2">{user.displayName}</span>
+                    <Avatar className="h-8 w-8 mr-2">
+                      <AvatarImage src={user.photoURL} alt={user.displayName} />
+                      <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={signOutUser}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                onClick={signInWithGoogle}
+                variant="outline"
+                className="flex items-center px-4 py-2 border rounded-md transition-colors duration-200 ease-in-out hover:bg-gray-50">
+                <GoogleIcon className="mr-2 h-5 w-5" />
+                Sign in with Google
               </Button>
-            </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -109,7 +138,7 @@ export function NavbarComponent({ isAdmin = true }) {
                       href="/"
                       className="flex items-center"
                       onClick={() => setIsSidebarOpen(false)}>
-                      <img className="h-8 w-auto" src="/gdg-logo.png" alt="GDG Logo" />
+                      <Image width={32} height={32} src="/gdg-logo.png" alt="GDG Logo" />
                       <span className="ml-2 text-xl font-bold text-blue-600">GDGoC APSIT</span>
                     </Link>
                   </div>
@@ -139,15 +168,27 @@ export function NavbarComponent({ isAdmin = true }) {
                     )}
                   </div>
                   <div className="mt-auto p-4 border-t border-gray-200">
-                    <div className="flex items-center space-x-4">
-                      <span className="text-black">John Doe</span>
-                      <Link href="/profile" onClick={() => setIsSidebarOpen(false)}>
-                        <Button variant="ghost" size="icon">
-                          <User className="h-5 w-5 text-gray-600" />
-                          <span className="sr-only">User profile</span>
+                    {user ? (
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={user.photoURL} alt={user.displayName} />
+                          <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-black">{user.displayName}</span>
+                        <Button variant="ghost" size="sm" onClick={signOutUser}>
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Sign out
                         </Button>
-                      </Link>
-                    </div>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={signInWithGoogle}
+                        variant="outline"
+                        className="w-full flex items-center justify-center px-4 py-2 border rounded-md transition-colors duration-200 ease-in-out hover:bg-gray-50">
+                        <GoogleIcon className="mr-2 h-5 w-5" />
+                        Sign in with Google
+                      </Button>
+                    )}
                   </div>
                 </div>
               </SheetContent>
