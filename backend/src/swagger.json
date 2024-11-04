@@ -3,11 +3,131 @@
   "info": {
     "version": "1.0.0",
     "title": "GDG OC APSIT API",
-    "description": "API documentation for notifications management and logging"
+    "description": "API documentation for GDG OC APSIT website, including blog management"
   },
   "host": "localhost:5000",
   "basePath": "/api",
   "paths": {
+    
+    "/blogs": {
+      "get": {
+        "summary": "Get all blog posts",
+        "tags": ["Blogs"],
+        "responses": {
+          "200": {
+            "description": "A list of all blog posts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Blog"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new blog post",
+        "tags": ["Blogs"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BlogInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Blog post created successfully",
+            "schema": {
+              "$ref": "#/definitions/Blog"
+            }
+          }
+        }
+      }
+    },
+    "/blogs/{id}": {
+      "get": {
+        "summary": "Get a blog post by ID",
+        "tags": ["Blogs"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the blog post to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog post data",
+            "schema": {
+              "$ref": "#/definitions/Blog"
+            }
+          },
+          "404": {
+            "description": "Blog post not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a blog post by ID",
+        "tags": ["Blogs"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the blog post to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BlogInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog post updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Blog"
+            }
+          },
+          "404": {
+            "description": "Blog post not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a blog post by ID",
+        "tags": ["Blogs"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the blog post to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog post deleted successfully"
+          },
+          "404": {
+            "description": "Blog post not found"
+          }
+        }
+      }
+    },
+    
     "/notifications": {
       "get": {
         "summary": "Get all notifications",
@@ -160,6 +280,546 @@
           }
         }
       }
+    },
+    "/resources": {
+  "get": {
+    "summary": "Get all resources",
+    "tags": ["Resources"],
+    "responses": {
+      "200": {
+        "description": "A list of all resources",
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Resource"
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error"
+      }
     }
+  },
+  "post": {
+    "summary": "Create a new resource",
+    "tags": ["Resources"],
+    "parameters": [
+      {
+        "name": "body",
+        "in": "body",
+        "required": true,
+        "schema": {
+          "$ref": "#/definitions/ResourceInput"
+        }
+      }
+    ],
+    "responses": {
+      "201": {
+        "description": "Resource created successfully",
+        "schema": {
+          "$ref": "#/definitions/Resource"
+        }
+      },
+      "400": {
+        "description": "Invalid input"
+      }
+    }
+  }
+},
+"/resources/{id}": {
+  "get": {
+    "summary": "Get a resource by ID",
+    "tags": ["Resources"],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "ID of the resource to retrieve"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Resource data",
+        "schema": {
+          "$ref": "#/definitions/Resource"
+        }
+      },
+      "404": {
+        "description": "Resource not found"
+      },
+      "500": {
+        "description": "Internal server error"
+      }
+    }
+  },
+  "put": {
+    "summary": "Update a resource by ID",
+    "tags": ["Resources"],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "ID of the resource to update"
+      },
+      {
+        "name": "body",
+        "in": "body",
+        "required": true,
+        "schema": {
+          "$ref": "#/definitions/ResourceInput"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Resource updated successfully",
+        "schema": {
+          "$ref": "#/definitions/Resource"
+        }
+      },
+      "404": {
+        "description": "Resource not found"
+      },
+      "400": {
+        "description": "Invalid input"
+      }
+    }
+  },
+  "delete": {
+    "summary": "Delete a resource by ID",
+    "tags": ["Resources"],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "ID of the resource to delete"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Resource deleted successfully"
+      },
+      "404": {
+        "description": "Resource not found"
+      },
+      "500": {
+        "description": "Internal server error"
+      }
+    }
+  }
+},
+"/events": {
+      "post": {
+        "summary": "Create a new event",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EventInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Event created successfully",
+            "schema": {
+              "$ref": "#/definitions/Event"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all events",
+        "tags": ["Events"],
+        "responses": {
+          "200": {
+            "description": "A list of all events",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Event"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{id}": {
+      "get": {
+        "summary": "Get an event by ID",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the event to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event data",
+            "schema": {
+              "$ref": "#/definitions/Event"
+            }
+          },
+          "404": {
+            "description": "Event not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an event by ID",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the event to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EventInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Event"
+            }
+          },
+          "404": {
+            "description": "Event not found"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an event by ID",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the event to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event deleted successfully"
+          },
+          "404": {
+            "description": "Event not found"
+          }
+        }
+      }
+    },
+    "/attendance": {
+      "get": {
+        "summary": "Get all attendance records",
+        "tags": ["Attendance"],
+        "responses": {
+          "200": {
+            "description": "A list of all attendance records",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Attendance"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new attendance record",
+        "tags": ["Attendance"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AttendanceInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Attendance record created successfully",
+            "schema": {
+              "$ref": "#/definitions/Attendance"
+            }
+          }
+        }
+      }
+    },
+    "/attendance/{id}": {
+      "get": {
+        "summary": "Get an attendance record by ID",
+        "tags": ["Attendance"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the attendance record to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance record data",
+            "schema": {
+              "$ref": "#/definitions/Attendance"
+            }
+          },
+          "404": {
+            "description": "Attendance record not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an attendance record by ID",
+        "tags": ["Attendance"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the attendance record to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AttendanceInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance record updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Attendance"
+            }
+          },
+          "404": {
+            "description": "Attendance record not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an attendance record by ID",
+        "tags": ["Attendance"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the attendance record to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance record deleted successfully"
+          },
+          "404": {
+            "description": "Attendance record not found"
+          }
+        }
+      }
+    },
+  "definitions": {
+    "Attendance": {
+      "type": "object",
+      "properties": {
+        "attendance_id": {
+          "type": "string",
+          "description": "Unique identifier for the attendance record"
+        },
+        "event_id": {
+          "type": "string",
+          "description": "ID of the associated event"
+        },
+        "user_id": {
+          "type": "string",
+          "description": "ID of the user"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Present", "Absent", "Late"],
+          "description": "Attendance status of the user"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the attendance record"
+        }
+      }
+    },
+    "AttendanceInput": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "description": "ID of the associated event"
+        },
+        "user_id": {
+          "type": "string",
+          "description": "ID of the user"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Present", "Absent", "Late"],
+          "description": "Attendance status of the user"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the attendance record"
+        }
+      },
+      "required": ["event_id", "user_id", "status"]
+    },
+    "Event": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the event"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the event"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the event"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the event"
+        },
+        "organizer": {
+          "type": "string",
+          "description": "Organizer's ID"
+        }
+      }
+    },
+    "EventInput": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the event"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the event"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the event"
+        },
+        "organizer": {
+          "type": "string",
+          "description": "Organizer's ID"
+        }
+      },
+      "required": ["name", "date", "location", "organizer"]
+    },
+    "Blog": {
+      "type": "object",
+      "properties": {
+        "blog_id": {
+          "type": "string",
+          "description": "Unique identifier for the blog post"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the blog post"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the blog post"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author's user ID"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the blog post"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date when the blog post was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date when the blog post was last updated"
+        }
+      }
+    },
+    "BlogInput": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the blog post"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the blog post"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author's user ID"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the blog post"
+        }
+      },
+      "required": ["title", "content", "author"]
+    }
+  }
   }
 }
