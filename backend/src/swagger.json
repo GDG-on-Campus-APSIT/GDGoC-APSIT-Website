@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "GDG OC APSIT API",
-    "description": "API documentation for notifications management, logging, and achievements"
+    "description": "API documentation for notifications management, logging, achievements, and user management"
   },
   "host": "localhost:5000",
   "basePath": "/api",
@@ -272,6 +272,168 @@
           },
           "404": {
             "description": "Achievement not found"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Get all users",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "List of all users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "firebase_uid": { "type": "string", "example": "firebase_uid_123" },
+                  "name": { "type": "string", "example": "John Doe" },
+                  "email": { "type": "string", "example": "john.doe@example.com" },
+                  "phone_number": { "type": "string", "example": "1234567890" },
+                  "branch": { "type": "string", "example": "Computer Science" },
+                  "college_joining_year": { "type": "integer", "example": 2022 },
+                  "moodle_id": { "type": "string", "example": "moodle_123" },
+                  "id_card_image_url": { "type": "string", "example": "http://example.com/id_card.jpg" },
+                  "role": { "type": "string", "enum": ["Super Admin", "Admin", "Member", "Guest"], "example": "Member" },
+                  "profile_picture": { "type": "string", "example": "http://example.com/profile.jpg" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firebase_uid": { "type": "string", "example": "firebase_uid_123" },
+                "name": { "type": "string", "example": "John Doe" },
+                "email": { "type": "string", "example": "john.doe@example.com" },
+                "phone_number": { "type": "string", "example": "1234567890" },
+                "branch": { "type": "string", "example": "Computer Science" },
+                "college_joining_year": { "type": "integer", "example": 2022 },
+                "moodle_id": { "type": "string", "example": "moodle_123" },
+                "id_card_image_url": { "type": "string", "example": "http://example.com/id_card.jpg" },
+                "role": { "type": "string", "enum": ["Super Admin", "Admin", "Member", "Guest"], "example": "Member" },
+                "profile_picture": { "type": "string", "example": "http://example.com/profile.jpg" },
+                "password": { "type": "string", "example": "securePassword123" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Get a user by ID",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the user to fetch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firebase_uid": { "type": "string" },
+                "name": { "type": "string" },
+                "email": { "type": "string" },
+                "phone_number": { "type": "string" },
+                "branch": { "type": "string" },
+                "college_joining_year": { "type": "integer" },
+                "moodle_id": { "type": "string" },
+                "id_card_image_url": { "type": "string" },
+                "role": { "type": "string", "enum": ["Super Admin", "Admin", "Member", "Guest"] },
+                "profile_picture": { "type": "string" }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a user by ID",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the user to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firebase_uid": { "type": "string" },
+                "name": { "type": "string" },
+                "email": { "type": "string" },
+                "phone_number": { "type": "string" },
+                "branch": { "type": "string" },
+                "college_joining_year": { "type": "integer" },
+                "moodle_id": { "type": "string" },
+                "id_card_image_url": { "type": "string" },
+                "role": { "type": "string", "enum": ["Super Admin", "Admin", "Member", "Guest"] },
+                "profile_picture": { "type": "string" },
+                "password": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user by ID",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the user to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully"
+          },
+          "404": {
+            "description": "User not found"
           }
         }
       }

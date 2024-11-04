@@ -54,5 +54,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/logs', require('./routes/logRoutes'));
 app.use('/api/achievements', require('./routes/achievementRoutes.js'));
+app.use('/api/users', require('./routes/userRoutes.js'));
 
 module.exports = app;

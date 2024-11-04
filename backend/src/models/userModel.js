@@ -2,11 +2,17 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  user_id: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
+  firebase_uid: { type: String, required: true },
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  role: { type: String, enum: ["Super Admin", "Admin", "Member", "Guest"], required: true }, // Enum based on role type
+  phone_number: { type: String, required: true, unique: true }, // Made unique
+  branch: { type: String, required: true },
+  college_joining_year: { type: Number, required: true },
+  moodle_id: { type: String, unique: true },
+  id_card_image_url: { type: String, required: true },
+  role: { type: String, enum: ["Super Admin", "Admin", "Member", "Guest"], required: true },
   profile_picture: { type: String },
+  password: { type: String, required: true },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
 });
