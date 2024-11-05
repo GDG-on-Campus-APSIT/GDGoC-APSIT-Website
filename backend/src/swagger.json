@@ -14,7 +14,13 @@
         "tags": ["Notifications"],
         "responses": {
           "200": {
-            "description": "List of all notifications"
+            "description": "List of all notifications",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notification"
+              }
+            }
           }
         }
       },
@@ -27,18 +33,16 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string", "example": "info" },
-                "message": { "type": "string", "example": "New notification" },
-                "sent_to": { "type": "array", "items": { "type": "string" }, "example": ["user_id1", "user_id2"] }
-              }
+              "$ref": "#/definitions/Notification"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Notification created successfully"
+            "description": "Notification created successfully",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
           }
         }
       }
@@ -58,7 +62,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Notification data"
+            "description": "Notification data",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
           },
           "404": {
             "description": "Notification not found"
@@ -81,12 +88,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string" },
-                "message": { "type": "string" },
-                "sent_to": { "type": "array", "items": { "type": "string" } }
-              }
+              "$ref": "#/definitions/Notification"
             }
           }
         ],
@@ -131,15 +133,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "id": { "type": "string" },
-                  "method": { "type": "string" },
-                  "url": { "type": "string" },
-                  "status": { "type": "integer" },
-                  "responseTime": { "type": "number" },
-                  "timestamp": { "type": "string", "format": "date-time" }
-                }
+                "$ref": "#/definitions/Log"
               }
             }
           },
@@ -167,7 +161,13 @@
         "tags": ["Achievements"],
         "responses": {
           "200": {
-            "description": "List of all achievements"
+            "description": "List of all achievements",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Achievement"
+              }
+            }
           }
         }
       },
@@ -180,19 +180,16 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string", "example": "Achievement Name" },
-                "description": { "type": "string", "example": "Achievement Description" },
-                "badge_level": { "type": "integer", "example": 1 },
-                "issued_to": { "type": "array", "items": { "type": "string" }, "example": ["user_id1", "user_id2"] }
-              }
+              "$ref": "#/definitions/Achievement"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Achievement created successfully"
+            "description": "Achievement created successfully",
+            "schema": {
+              "$ref": "#/definitions/Achievement"
+            }
           }
         }
       }
@@ -212,7 +209,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Achievement data"
+            "description": "Achievement data",
+            "schema": {
+              "$ref": "#/definitions/Achievement"
+            }
           },
           "404": {
             "description": "Achievement not found"
@@ -235,13 +235,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string" },
-                "description": { "type": "string" },
-                "badge_level": { "type": "integer" },
-                "issued_to": { "type": "array", "items": { "type": "string" } }
-              }
+              "$ref": "#/definitions/Achievement"
             }
           }
         ],
@@ -286,19 +280,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "firebase_uid": { "type": "string", "example": "firebase_uid_123" },
-                  "name": { "type": "string", "example": "John Doe" },
-                  "email": { "type": "string", "example": "john.doe@example.com" },
-                  "phone_number": { "type": "string", "example": "1234567890" },
-                  "branch": { "type": "string", "example": "Computer Science" },
-                  "college_joining_year": { "type": "integer", "example": 2022 },
-                  "moodle_id": { "type": "string", "example": "moodle_123" },
-                  "id_card_image_url": { "type": "string", "example": "http://example.com/id_card.jpg" },
-                  "role": { "type": "string", "enum": ["Super Admin", "Admin", "Member", "Guest"], "example": "Member" },
-                  "profile_picture": { "type": "string", "example": "http://example.com/profile.jpg" }
-                }
+                "$ref": "#/definitions/User"
               }
             }
           }
@@ -313,26 +295,16 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "firebase_uid": { "type": "string", "example": "firebase_uid_123" },
-                "name": { "type": "string", "example": "John Doe" },
-                "email": { "type": "string", "example": "john.doe@example.com" },
-                "phone_number": { "type": "string", "example": "1234567890" },
-                "branch": { "type": "string", "example": "Computer Science" },
-                "college_joining_year": { "type": "integer", "example": 2022 },
-                "moodle_id": { "type": "string", "example": "moodle_123" },
-                "id_card_image_url": { "type": "string", "example": "http://example.com/id_card.jpg" },
-                "role": { "type": "string", "enum": ["Super Admin", "Admin", "Member", "Guest"], "example": "Member" },
-                "profile_picture": { "type": "string", "example": "http://example.com/profile.jpg" },
-                "password": { "type": "string", "example": "securePassword123" }
-              }
+              "$ref": "#/definitions/User"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "User created successfully"
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           }
         }
       }
@@ -354,19 +326,7 @@
           "200": {
             "description": "User data",
             "schema": {
-              "type": "object",
-              "properties": {
-                "firebase_uid": { "type": "string" },
-                "name": { "type": "string" },
-                "email": { "type": "string" },
-                "phone_number": { "type": "string" },
-                "branch": { "type": "string" },
-                "college_joining_year": { "type": "integer" },
-                "moodle_id": { "type": "string" },
-                "id_card_image_url": { "type": "string" },
-                "role": { "type": "string", "enum": ["Super Admin", "Admin", "Member", "Guest"] },
-                "profile_picture": { "type": "string" }
-              }
+              "$ref": "#/definitions/User"
             }
           },
           "404": {
@@ -390,20 +350,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "firebase_uid": { "type": "string" },
-                "name": { "type": "string" },
-                "email": { "type": "string" },
-                "phone_number": { "type": "string" },
-                "branch": { "type": "string" },
-                "college_joining_year": { "type": "integer" },
-                "moodle_id": { "type": "string" },
-                "id_card_image_url": { "type": "string" },
-                "role": { "type": "string", "enum": ["Super Admin", "Admin", "Member", "Guest"] },
-                "profile_picture": { "type": "string" },
-                "password": { "type": "string" }
-              }
+              "$ref": "#/definitions/User"
             }
           }
         ],
@@ -437,6 +384,137 @@
           }
         }
       }
+    }
+  },
+  "definitions": {
+    "Notification": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["Info", "Warning", "Alert"]
+        },
+        "message": {
+          "type": "string"
+        },
+        "sent_to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["notification_id", "type", "message", "sent_to"]
+    },
+    "Log": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "responseTime": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["method", "url", "status", "responseTime"]
+    },
+    "Achievement": {
+      "type": "object",
+      "properties": {
+        "achievement_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "badge_level": {
+          "type": "integer"
+        },
+        "issued_to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["achievement_id", "name", "description", "badge_level", "issued_to"]
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "firebase_uid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "phone_number": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "college_joining_year": {
+          "type": "integer"
+        },
+        "moodle_id": {
+          "type": "string"
+        },
+        "id_card_image_url": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["Super Admin", "Admin", "Member", "Guest"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "inactive"]
+        },
+        "profile_picture": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["firebase_uid", "name", "email", "phone_number", "branch", "college_joining_year", "id_card_image_url", "role", "password"]
     }
   }
 }
