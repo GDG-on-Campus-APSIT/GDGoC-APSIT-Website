@@ -14,7 +14,13 @@
         "tags": ["Notifications"],
         "responses": {
           "200": {
-            "description": "List of all notifications"
+            "description": "List of all notifications",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notification"
+              }
+            }
           }
         }
       },
@@ -27,18 +33,16 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string", "example": "info" },
-                "message": { "type": "string", "example": "New notification" },
-                "sent_to": { "type": "array", "items": { "type": "string" }, "example": ["user_id1", "user_id2"] }
-              }
+              "$ref": "#/definitions/NotificationInput"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Notification created successfully"
+            "description": "Notification created successfully",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
           }
         }
       }
@@ -58,7 +62,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Notification data"
+            "description": "Notification data",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
           },
           "404": {
             "description": "Notification not found"
@@ -81,18 +88,16 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string" },
-                "message": { "type": "string" },
-                "sent_to": { "type": "array", "items": { "type": "string" } }
-              }
+              "$ref": "#/definitions/NotificationInput"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Notification updated successfully"
+            "description": "Notification updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
           },
           "404": {
             "description": "Notification not found"
@@ -131,15 +136,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "id": { "type": "string" },
-                  "method": { "type": "string" },
-                  "url": { "type": "string" },
-                  "status": { "type": "integer" },
-                  "responseTime": { "type": "number" },
-                  "timestamp": { "type": "string", "format": "date-time" }
-                }
+                "$ref": "#/definitions/Log"
               }
             }
           },
@@ -160,6 +157,818 @@
           }
         }
       }
+    },
+    "/blogs": {
+      "get": {
+        "summary": "Get all blog posts",
+        "tags": ["Blogs"],
+        "responses": {
+          "200": {
+            "description": "A list of all blog posts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref":"#/definitions/Blog"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new blog post",
+        "tags": ["Blogs"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref":"#/definitions/BlogInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Blog post created successfully",
+            "schema": {
+              "$ref":"#/definitions/Blog"
+            }
+          }
+        }
+      }
+    },
+    "/blogs/{id}": {
+      "get": {
+        "summary": "Get a blog post by ID",
+        "tags": ["Blogs"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the blog post to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog post data",
+            "schema": {
+              "$ref": "#/definitions/Blog"
+            }
+          },
+          "404": {
+            "description": "Blog post not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a blog post by ID",
+        "tags": ["Blogs"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the blog post to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BlogInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog post updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Blog"
+            }
+          },
+          "404": {
+            "description": "Blog post not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a blog post by ID",
+        "tags": ["Blogs"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the blog post to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog post deleted successfully"
+          },
+          "404": {
+            "description": "Blog post not found"
+          }
+        }
+      }
+    },
+    "/resources": {
+  "get": {
+    "summary": "Get all resources",
+    "tags": ["Resources"],
+    "responses": {
+      "200": {
+        "description": "A list of all resources",
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Resource"
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error"
+      }
+    }
+  },
+  "post": {
+    "summary": "Create a new resource",
+    "tags": ["Resources"],
+    "parameters": [
+      {
+        "name": "body",
+        "in": "body",
+        "required": true,
+        "schema": {
+          "$ref": "#/definitions/ResourceInput"
+        }
+      }
+    ],
+    "responses": {
+      "201": {
+        "description": "Resource created successfully",
+        "schema": {
+          "$ref": "#/definitions/Resource"
+        }
+      },
+      "400": {
+        "description": "Invalid input"
+      }
+    }
+  }
+    },
+    "/resources/{id}": {
+  "get": {
+    "summary": "Get a resource by ID",
+    "tags": ["Resources"],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "ID of the resource to retrieve"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Resource data",
+        "schema": {
+          "$ref": "#/definitions/Resource"
+        }
+      },
+      "404": {
+        "description": "Resource not found"
+      },
+      "500": {
+        "description": "Internal server error"
+      }
+    }
+  },
+  "put": {
+    "summary": "Update a resource by ID",
+    "tags": ["Resources"],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "ID of the resource to update"
+      },
+      {
+        "name": "body",
+        "in": "body",
+        "required": true,
+        "schema": {
+          "$ref": "#/definitions/ResourceInput"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Resource updated successfully",
+        "schema": {
+          "$ref": "#/definitions/Resource"
+        }
+      },
+      "404": {
+        "description": "Resource not found"
+      },
+      "400": {
+        "description": "Invalid input"
+      }
+    }
+  },
+  "delete": {
+    "summary": "Delete a resource by ID",
+    "tags": ["Resources"],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "ID of the resource to delete"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Resource deleted successfully"
+      },
+      "404": {
+        "description": "Resource not found"
+      },
+      "500": {
+        "description": "Internal server error"
+      }
+    }
+  }
+    },
+    "/events": {
+      "post": {
+        "summary": "Create a new event",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EventInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Event created successfully",
+            "schema": {
+              "$ref": "#/definitions/Event"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all events",
+        "tags": ["Events"],
+        "responses": {
+          "200": {
+            "description": "A list of all events",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Event"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{id}": {
+      "get": {
+        "summary": "Get an event by ID",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the event to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event data",
+            "schema": {
+              "$ref": "#/definitions/Event"
+            }
+          },
+          "404": {
+            "description": "Event not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an event by ID",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the event to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EventInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Event"
+            }
+          },
+          "404": {
+            "description": "Event not found"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an event by ID",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the event to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event deleted successfully"
+          },
+          "404": {
+            "description": "Event not found"
+          }
+        }
+      }
+    },
+    "/attendance": {
+      "get": {
+        "summary": "Get all attendance records",
+        "tags": ["Attendance"],
+        "responses": {
+          "200": {
+            "description": "A list of all attendance records",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Attendance"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new attendance record",
+        "tags": ["Attendance"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AttendanceInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Attendance record created successfully",
+            "schema": {
+              "$ref": "#/definitions/Attendance"
+            }
+          }
+        }
+      }
+    },
+    "/attendance/{id}": {
+      "get": {
+        "summary": "Get an attendance record by ID",
+        "tags": ["Attendance"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the attendance record to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance record data",
+            "schema": {
+              "$ref": "#/definitions/Attendance"
+            }
+          },
+          "404": {
+            "description": "Attendance record not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an attendance record by ID",
+        "tags": ["Attendance"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the attendance record to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AttendanceInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance record updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Attendance"
+            }
+          },
+          "404": {
+            "description": "Attendance record not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an attendance record by ID",
+        "tags": ["Attendance"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the attendance record to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance record deleted successfully"
+          },
+          "404": {
+            "description": "Attendance record not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Notification": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
+          "type": "string",
+          "description": "Unique identifier for the notification"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["Info", "Warning", "Alert"],
+          "description": "Type of notification"
+        },
+        "message": {
+          "type": "string",
+          "description": "Message content of the notification"
+        },
+        "sent_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "User IDs the notification was sent to"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the notification was created"
+        }
+      }
+    },
+    "NotificationInput": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["Info", "Warning", "Alert"],
+          "description": "Type of notification"
+        },
+        "message": {
+          "type": "string",
+          "description": "Message content of the notification"
+        },
+        "sent_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "User IDs the notification will be sent to"
+          }
+        }
+      }
+    },
+    "Log": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "HTTP method (GET, POST, etc.)"
+        },
+        "url": {
+          "type": "string",
+          "description": "Request URL"
+        },
+        "status": {
+          "type": "integer",
+          "description": "HTTP status code"
+        },
+        "responseTime": {
+          "type": "number",
+          "description": "Response time in milliseconds"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the log entry"
+        }
+      }
+    },
+    "Blog": {
+      "type": "object",
+      "properties": {
+        "blog_id": {
+          "type": "string",
+          "description": "Unique identifier for the blog post"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the blog post"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the blog post"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author's user ID"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the blog post"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date when the blog post was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date when the blog post was last updated"
+        }
+      }
+    },
+    "BlogInput": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the blog post"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the blog post"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author's user ID"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the blog post"
+        }
+      },
+      "required": ["title", "content", "author"]
+    },
+    "Attendance": {
+      "type": "object",
+      "properties": {
+        "attendance_id": {
+          "type": "string",
+          "description": "Unique identifier for the attendance record"
+        },
+        "event_id": {
+          "type": "string",
+          "description": "ID of the associated event"
+        },
+        "user_id": {
+          "type": "string",
+          "description": "ID of the user"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Present", "Absent", "Late"],
+          "description": "Attendance status of the user"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the attendance record"
+        }
+      }
+    },
+    "AttendanceInput": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "description": "ID of the associated event"
+        },
+        "user_id": {
+          "type": "string",
+          "description": "ID of the user"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Present", "Absent", "Late"],
+          "description": "Attendance status of the user"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the attendance record"
+        }
+      },
+      "required": ["event_id", "user_id", "status"]
+    },
+    "Event": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the event"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the event"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the event"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the event"
+        },
+        "organizer": {
+          "type": "string",
+          "description": "Organizer's ID"
+        }
+      }
+    },
+    "EventInput": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the event"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the event"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the event"
+        },
+        "organizer": {
+          "type": "string",
+          "description": "Organizer's ID"
+        }
+      },
+      "required": ["name", "date", "location", "organizer"]
+    },
+    "Resource": {
+      "type": "object",
+      "properties": {
+        "resource_id": {
+          "type": "string",
+          "format": "objectId",
+          "description": "Unique identifier for the resource"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the resource"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["PDF", "Video", "Article"],
+          "description": "Type of the resource"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the resource"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "objectId",
+          "description": "ID of the user who created the resource"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the resource"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date and time when the resource was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date and time when the resource was last updated"
+        }
+      },
+      "required": ["resource_id", "title", "type", "created_by"]
+    },
+    "ResourceInput": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the resource"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["PDF", "Video", "Article"],
+          "description": "Type of the resource"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the resource"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "objectId",
+          "description": "ID of the user who created the resource"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the resource"
+        }
+      },
+      "required": ["title", "type", "created_by"]
     }
   }
 }
