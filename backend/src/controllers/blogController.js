@@ -8,7 +8,12 @@ exports.createBlog = async (req, res) => {
     const result = await blog.save();
     res.status(201).json(result);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    // Check for validation errors
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message });
+    }
+    // Handle other types of errors
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -40,7 +45,11 @@ exports.updateBlog = async (req, res) => {
     if (!blog) return res.status(404).json({ message: 'Blog not found' });
     res.status(200).json(blog);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    // Check for validation errors
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

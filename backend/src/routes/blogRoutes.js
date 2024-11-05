@@ -3,14 +3,14 @@ const express = require('express');
 const blogController = require('../controllers/blogController');
 const router = express.Router();
 
-router.get('/', blogController.getBlogs);
+router.get('/', blogController.getBlogs);  // Get all blogs records
 
-router.get('/:id', blogController.getBlogById);
+router.get('/:id', blogController.getBlogById); //get specific one blog by ID 
+ 
+router.post('/', blogController.createBlog);  //create new blog
 
-router.post('/', blogController.createBlog);
+router.put('/:id', blogController.updateBlog);   //update pre-existing blog by ID 
 
-router.put('/:id', blogController.updateBlog);
-
-router.delete('/:id', blogController.deleteBlog);
+router.delete('/:id', blogController.deleteBlog); //delete a blog by ID
 
 module.exports = router;

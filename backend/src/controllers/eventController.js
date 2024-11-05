@@ -3,12 +3,16 @@ const Event = require("../models/eventModel");
 // Create a new event
 exports.createEvent = async (req, res) => {
   try {
-    
     const event = new Event(req.body);
     await event.save();
     res.status(201).json(event);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    // Check for validation errors
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
+    // Handle other server errors
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -42,7 +46,11 @@ exports.updateEvent = async (req, res) => {
     if (!event) return res.status(404).json({ error: "Event not found" });
     res.json(event);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    // Check for validation errors
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
