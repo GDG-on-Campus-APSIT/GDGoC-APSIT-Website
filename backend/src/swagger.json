@@ -3,12 +3,161 @@
   "info": {
     "version": "1.0.0",
     "title": "GDG OC APSIT API",
-    "description": "API documentation for GDG OC APSIT website, including blog management"
+    "description": "API documentation for notifications management and logging"
   },
   "host": "localhost:5000",
   "basePath": "/api",
   "paths": {
-    
+    "/notifications": {
+      "get": {
+        "summary": "Get all notifications",
+        "tags": ["Notifications"],
+        "responses": {
+          "200": {
+            "description": "List of all notifications",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notification"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new notification",
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NotificationInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Notification created successfully",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{id}": {
+      "get": {
+        "summary": "Get a notification by ID",
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the notification to fetch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification data",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          },
+          "404": {
+            "description": "Notification not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a notification by ID",
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the notification to update"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NotificationInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          },
+          "404": {
+            "description": "Notification not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a notification by ID",
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the notification to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification deleted successfully"
+          },
+          "404": {
+            "description": "Notification not found"
+          }
+        }
+      }
+    },
+    "/logs": {
+      "get": {
+        "summary": "Get all log entries",
+        "tags": ["Logs"],
+        "responses": {
+          "200": {
+            "description": "A list of logs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Log"
+              }
+            }
+          },
+          "500": {
+            "description": "Error fetching logs"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all log entries",
+        "tags": ["Logs"],
+        "responses": {
+          "200": {
+            "description": "All logs deleted successfully"
+          },
+          "500": {
+            "description": "Error deleting logs"
+          }
+        }
+      }
+    },
     "/blogs": {
       "get": {
         "summary": "Get all blog posts",
@@ -19,7 +168,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Blog"
+                "$ref":"#/definitions/Blog"
               }
             }
           }
@@ -34,7 +183,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/BlogInput"
+              "$ref":"#/definitions/BlogInput"
             }
           }
         ],
@@ -42,7 +191,7 @@
           "201": {
             "description": "Blog post created successfully",
             "schema": {
-              "$ref": "#/definitions/Blog"
+              "$ref":"#/definitions/Blog"
             }
           }
         }
@@ -127,160 +276,6 @@
         }
       }
     },
-    
-    "/notifications": {
-      "get": {
-        "summary": "Get all notifications",
-        "tags": ["Notifications"],
-        "responses": {
-          "200": {
-            "description": "List of all notifications"
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new notification",
-        "tags": ["Notifications"],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string", "example": "info" },
-                "message": { "type": "string", "example": "New notification" },
-                "sent_to": { "type": "array", "items": { "type": "string" }, "example": ["user_id1", "user_id2"] }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Notification created successfully"
-          }
-        }
-      }
-    },
-    "/notifications/{id}": {
-      "get": {
-        "summary": "Get a notification by ID",
-        "tags": ["Notifications"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "ID of the notification to fetch"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Notification data"
-          },
-          "404": {
-            "description": "Notification not found"
-          }
-        }
-      },
-      "put": {
-        "summary": "Update a notification by ID",
-        "tags": ["Notifications"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "ID of the notification to update"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string" },
-                "message": { "type": "string" },
-                "sent_to": { "type": "array", "items": { "type": "string" } }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Notification updated successfully"
-          },
-          "404": {
-            "description": "Notification not found"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete a notification by ID",
-        "tags": ["Notifications"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "ID of the notification to delete"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Notification deleted successfully"
-          },
-          "404": {
-            "description": "Notification not found"
-          }
-        }
-      }
-    },
-    "/logs": {
-      "get": {
-        "summary": "Get all log entries",
-        "tags": ["Logs"],
-        "responses": {
-          "200": {
-            "description": "A list of logs",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": { "type": "string" },
-                  "method": { "type": "string" },
-                  "url": { "type": "string" },
-                  "status": { "type": "integer" },
-                  "responseTime": { "type": "number" },
-                  "timestamp": { "type": "string", "format": "date-time" }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error fetching logs"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete all log entries",
-        "tags": ["Logs"],
-        "responses": {
-          "200": {
-            "description": "All logs deleted successfully"
-          },
-          "500": {
-            "description": "Error deleting logs"
-          }
-        }
-      }
-    },
     "/resources": {
   "get": {
     "summary": "Get all resources",
@@ -325,8 +320,8 @@
       }
     }
   }
-},
-"/resources/{id}": {
+    },
+    "/resources/{id}": {
   "get": {
     "summary": "Get a resource by ID",
     "tags": ["Resources"],
@@ -413,8 +408,8 @@
       }
     }
   }
-},
-"/events": {
+    },
+    "/events": {
       "post": {
         "summary": "Create a new event",
         "tags": ["Events"],
@@ -655,8 +650,149 @@
           }
         }
       }
-    },
+    }
+  },
   "definitions": {
+    "Notification": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
+          "type": "string",
+          "description": "Unique identifier for the notification"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["Info", "Warning", "Alert"],
+          "description": "Type of notification"
+        },
+        "message": {
+          "type": "string",
+          "description": "Message content of the notification"
+        },
+        "sent_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "User IDs the notification was sent to"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the notification was created"
+        }
+      }
+    },
+    "NotificationInput": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["Info", "Warning", "Alert"],
+          "description": "Type of notification"
+        },
+        "message": {
+          "type": "string",
+          "description": "Message content of the notification"
+        },
+        "sent_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "User IDs the notification will be sent to"
+          }
+        }
+      }
+    },
+    "Log": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "HTTP method (GET, POST, etc.)"
+        },
+        "url": {
+          "type": "string",
+          "description": "Request URL"
+        },
+        "status": {
+          "type": "integer",
+          "description": "HTTP status code"
+        },
+        "responseTime": {
+          "type": "number",
+          "description": "Response time in milliseconds"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the log entry"
+        }
+      }
+    },
+    "Blog": {
+      "type": "object",
+      "properties": {
+        "blog_id": {
+          "type": "string",
+          "description": "Unique identifier for the blog post"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the blog post"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the blog post"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author's user ID"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the blog post"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date when the blog post was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date when the blog post was last updated"
+        }
+      }
+    },
+    "BlogInput": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the blog post"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the blog post"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author's user ID"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the blog post"
+        }
+      },
+      "required": ["title", "content", "author"]
+    },
     "Attendance": {
       "type": "object",
       "properties": {
@@ -757,69 +893,82 @@
       },
       "required": ["name", "date", "location", "organizer"]
     },
-    "Blog": {
+    "Resource": {
       "type": "object",
       "properties": {
-        "blog_id": {
+        "resource_id": {
           "type": "string",
-          "description": "Unique identifier for the blog post"
+          "format": "objectId",
+          "description": "Unique identifier for the resource"
         },
         "title": {
           "type": "string",
-          "description": "Title of the blog post"
+          "description": "Title of the resource"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["PDF", "Video", "Article"],
+          "description": "Type of the resource"
         },
         "content": {
           "type": "string",
-          "description": "Content of the blog post"
+          "description": "Content of the resource"
         },
-        "author": {
+        "created_by": {
           "type": "string",
-          "description": "Author's user ID"
+          "format": "objectId",
+          "description": "ID of the user who created the resource"
         },
         "tags": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Tags associated with the blog post"
+          "description": "Tags associated with the resource"
         },
         "created_at": {
           "type": "string",
           "format": "date-time",
-          "description": "Date when the blog post was created"
+          "description": "Date and time when the resource was created"
         },
         "updated_at": {
           "type": "string",
           "format": "date-time",
-          "description": "Date when the blog post was last updated"
+          "description": "Date and time when the resource was last updated"
         }
-      }
+      },
+      "required": ["resource_id", "title", "type", "created_by"]
     },
-    "BlogInput": {
+    "ResourceInput": {
       "type": "object",
       "properties": {
         "title": {
           "type": "string",
-          "description": "Title of the blog post"
+          "description": "Title of the resource"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["PDF", "Video", "Article"],
+          "description": "Type of the resource"
         },
         "content": {
           "type": "string",
-          "description": "Content of the blog post"
+          "description": "Content of the resource"
         },
-        "author": {
+        "created_by": {
           "type": "string",
-          "description": "Author's user ID"
+          "format": "objectId",
+          "description": "ID of the user who created the resource"
         },
         "tags": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Tags associated with the blog post"
+          "description": "Tags associated with the resource"
         }
       },
-      "required": ["title", "content", "author"]
+      "required": ["title", "type", "created_by"]
     }
-  }
   }
 }
