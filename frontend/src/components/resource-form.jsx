@@ -134,7 +134,8 @@ const ResourceForm = () => {
               </div>
               <div>
                 <Label htmlFor="content">Content:</Label>
-                {resource.type === "article" && (
+                {(resource.type === "article" ||
+                  resource.type === "tutorial") && (
                   <Textarea
                     name="content"
                     id="content"
@@ -142,14 +143,8 @@ const ResourceForm = () => {
                     onChange={handleContentChange}
                   />
                 )}
-                {resource.type === "pdf" && (
-                  <Input
-                    type="file"
-                    accept={"application/pdf"}
-                    onChange={handleContentChange}
-                  />
-                )}
-                {resource.type === "video" && (
+
+                {(resource.type === "course" || resource.type === "video") && (
                   <Input
                     type="text"
                     placeholder="Enter url"
