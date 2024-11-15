@@ -1,3 +1,5 @@
+// src/lib/useAuth.js
+
 import { useState, useEffect } from "react";
 import { auth, googleProvider } from "./firebase";
 import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";

@@ -1,5 +1,6 @@
 Frontend Structure:
 └── frontend
+    ├── .env.local
     ├── .eslintrc.json
     ├── components.json
     ├── jsconfig.json
@@ -25,6 +26,10 @@ Frontend Structure:
     │   │   │   │   └── page.js
     │   │   │   └── settings
     │   │   │       └── page.js
+    │   │   ├── auth
+    │   │   │   ├── login
+    │   │   │   └── signup
+    │   │   │       └── page.js
     │   │   ├── blog
     │   │   │   ├── page.js
     │   │   │   └── write
@@ -48,11 +53,14 @@ Frontend Structure:
     │   │   ├── recognition
     │   │   │   └── page.js
     │   │   └── resources
+    │   │       ├── access
+    │   │       │   └── page.js
     │   │       ├── page.js
     │   │       └── project
     │   │           └── submit
     │   │               └── page.js
     │   ├── components
+    │   │   ├── access-resource.jsx
     │   │   ├── blog-page.jsx
     │   │   ├── blog-submission.jsx
     │   │   ├── community-page.jsx
@@ -70,17 +78,22 @@ Frontend Structure:
     │   │   ├── recognition-page.jsx
     │   │   ├── resources-page.jsx
     │   │   ├── settings.jsx
+    │   │   ├── signup.jsx
     │   │   └── ui
     │   │       ├── accordion.jsx
+    │   │       ├── avatar.jsx
     │   │       ├── badge.jsx
     │   │       ├── button.jsx
     │   │       ├── calendar.jsx
     │   │       ├── card.jsx
     │   │       ├── dialog.jsx
     │   │       ├── dropdown-menu.jsx
+    │   │       ├── form.jsx
     │   │       ├── input.jsx
     │   │       ├── label.jsx
     │   │       ├── progress.jsx
+    │   │       ├── radio-group.jsx
+    │   │       ├── scroll-area.jsx
     │   │       ├── select.jsx
     │   │       ├── separator.jsx
     │   │       ├── sheet.jsx
@@ -88,12 +101,21 @@ Frontend Structure:
     │   │       ├── table.jsx
     │   │       ├── tabs.jsx
     │   │       └── textarea.jsx
+    │   ├── context
+    │   │   └── AuthContext.js
+    │   ├── hooks
+    │   │   └── use-toast.js
     │   └── lib
+    │       ├── firebase.js
+    │       ├── useAuth.js
     │       └── utils.js
     └── tailwind.config.js
 
 Backend Structure:
 └── backend
+    ├── .env
+    ├── logs
+    │   └── app.log
     ├── package-lock.json
     ├── package.json
     └── src
@@ -102,8 +124,12 @@ Backend Structure:
         │   ├── db.js
         │   └── logger.js
         ├── controllers
+        │   ├── attendanceController.js
+        │   ├── blogController.js
+        │   ├── eventController.js
         │   ├── logController.js
         │   ├── notificationController.js
+        │   ├── resourcesController.js
         │   └── userController.js
         ├── models
         │   ├── achievementModel.js
@@ -115,8 +141,12 @@ Backend Structure:
         │   ├── resourceModel.js
         │   └── userModel.js
         ├── routes
+        │   ├── attendanceRoutes.js
+        │   ├── blogRoutes.js
+        │   ├── eventRoute.js
         │   ├── logRoutes.js
         │   ├── notificationRoutes.js
+        │   ├── resourceRoute.js
         │   └── userRoutes.js
         ├── server.js
         └── swagger.json
