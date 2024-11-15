@@ -12,7 +12,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Edit, Trash2, Search, Calendar, Clock, MapPin, AlignJustify } from 'lucide-react';
 
 import { db } from '@/lib/firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"; // Firestore imports
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, arrayUnion } from "firebase/firestore"; // Firestore imports
+import Papa from "papaparse";
 
 export function EventManagement() {
   const [events, setEvents] = useState([]);
@@ -39,20 +40,20 @@ export function EventManagement() {
   const now = new Date();
 
   // Filter upcoming events
-  const upcomingEvents = events.filter(event => {
+  const upcomingEvents = filteredEvents.filter(event => {
     const eventStart = new Date(`${event.startDate}T${event.startTime}`);
     return eventStart > now;
   });
   
   // Filter current events
-  const currentEvents = events.filter(event => {
+  const currentEvents = filteredEvents.filter(event => {
     const eventStart = new Date(`${event.startDate}T${event.startTime}`);
     const eventEnd = new Date(`${event.endDate}T${event.endTime}`);
     return eventStart <= now && eventEnd >= now;
   });
   
   // Filter past events
-  const pastEvents = events.filter(event => {
+  const pastEvents = filteredEvents.filter(event => {
     const eventEnd = new Date(`${event.endDate}T${event.endTime}`);
     return eventEnd < now;
   });
@@ -68,12 +69,53 @@ export function EventManagement() {
     await addDoc(collection(db, "events"), { ...newEvent });
   };
 
+
   // Update an existing event in Firestore
   const handleEditEvent = async (updatedEvent) => {
     const eventRef = doc(db, "events", updatedEvent.id);
-    await updateDoc(eventRef, updatedEvent);
-    setEditingEvent(null);
+  
+    // Extract and remove leaderboardFile from updatedEvent
+    const { leaderboardFile, ...eventData } = updatedEvent;
+  
+    if (leaderboardFile) {
+      try {
+        // Parse the CSV file using PapaParse
+        const parsedData = await new Promise((resolve, reject) => {
+          Papa.parse(leaderboardFile, {
+            header: true, // Assumes the CSV has a header row
+            complete: (results) => resolve(results.data),
+            error: (error) => reject(error),
+          });
+        });
+  
+        // Filter out rows missing the "User Email" field, which is required as a unique key
+        const validLeaderboardData = parsedData
+          .filter(row => row["User Email"]) // Only keep rows with a "User Email" field
+          .map(row => ({
+            userEmail: row["User Email"], // Store as "userEmail" in Firestore
+            ...row, // Spread other columns as properties
+          }));
+  
+        // Add the leaderboard data to the event data
+        eventData.leaderboard = validLeaderboardData;
+      } catch (error) {
+        console.error("Error parsing CSV file:", error);
+        alert("Failed to parse the CSV file. Please check the file format.");
+        return; // Stop the function if there's a parsing error
+      }
+    }
+  
+    try {
+      // Update the event document in Firestore
+      await updateDoc(eventRef, eventData);
+      setEditingEvent(null);
+    } catch (error) {
+      console.error("Error updating Firestore:", error);
+      alert("Failed to update the event. Please try again.");
+    }
   };
+  
+  
 
   // Delete an event from Firestore
   const handleDeleteEvent = async (id) => {
@@ -175,7 +217,7 @@ export function EventManagement() {
   );
 }
 
-function EventCard({ event, onEdit, onDelete, onEnd, onViewSummary, isPast = false }) {
+function EventCard({ event, onEdit, onDelete, onViewSummary, isPast = false }) {
   return (
     <Card>
       <CardHeader>
@@ -345,15 +387,16 @@ function CreateEventForm({ onCreateEvent }) {
 
 function EditEventDialog({ event, onClose, onSave }) {
   const [editedEvent, setEditedEvent] = useState(event);
+  const [leaderboardFile, setLeaderboardFile] = useState(null); // State to hold the CSV file
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(editedEvent);
+    onSave({ ...editedEvent, leaderboardFile }); // Pass leaderboardFile with other event data
   };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent style={{ maxHeight: '80vh', overflowY: 'auto' }}> {/* Add max-height and overflow */}
+      <DialogContent style={{ maxHeight: '80vh', overflowY: 'auto' }}>
         <DialogHeader>
           <DialogTitle>Edit Event</DialogTitle>
         </DialogHeader>
@@ -443,6 +486,16 @@ function EditEventDialog({ event, onClose, onSave }) {
               required
             />
           </div>
+          {/* New CSV file upload field for leaderboard */}
+          <div>
+            <Label htmlFor="edit-leaderboard-file">Upload Leaderboard (CSV)</Label>
+            <Input
+              id="edit-leaderboard-file"
+              type="file"
+              accept=".csv"
+              onChange={(e) => setLeaderboardFile(e.target.files[0])} // Update state with selected file
+            />
+          </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
@@ -454,6 +507,7 @@ function EditEventDialog({ event, onClose, onSave }) {
     </Dialog>
   );
 }
+
 
 function EventSummaryDialog({ event, onClose }) {
   return (

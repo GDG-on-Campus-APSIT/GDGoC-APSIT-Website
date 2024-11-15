@@ -66,6 +66,7 @@ Frontend Structure:
     │   │   ├── community-page.jsx
     │   │   ├── contact-page.jsx
     │   │   ├── content-management.jsx
+    │   │   ├── enhanced-leaderboard.jsx
     │   │   ├── event-management.jsx
     │   │   ├── events-page.jsx
     │   │   ├── get-involved-page.jsx
