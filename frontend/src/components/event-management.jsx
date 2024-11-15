@@ -1,66 +1,136 @@
 'use client';
 
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Trash2, Search, Calendar, Clock, MapPin } from 'lucide-react';
+import { Edit, Trash2, Search, Calendar, Clock, MapPin, AlignJustify } from 'lucide-react';
 
-// Mock data for events
-const allEvents = [
-  { id: 1, title: "Web Development Workshop", date: "2024-11-15", time: "14:00", location: "Room 101", category: "Workshop", description: "Learn the basics of web development with HTML, CSS, and JavaScript.", status: "upcoming" },
-  { id: 2, title: "AI in Healthcare Talk", date: "2024-11-20", time: "15:30", location: "Auditorium", category: "Tech Talk", description: "Explore the applications of AI in modern healthcare systems.", status: "upcoming" },
-  { id: 3, title: "Mobile App Hackathon", date: "2024-12-01", time: "09:00", location: "Innovation Lab", category: "Hackathon", description: "Build innovative mobile apps in this 24-hour coding challenge.", status: "upcoming" },
-  { id: 4, title: "Cloud Computing Seminar", date: "2024-10-10", time: "13:00", location: "Conference Hall", category: "Seminar", description: "An overview of cloud computing technologies and their business applications.", status: "past" },
-  { id: 5, title: "Data Science Bootcamp", date: "2024-09-25", time: "10:00", location: "Room 205", category: "Workshop", description: "Intensive 3-day bootcamp covering data analysis, machine learning, and visualization.", status: "past" },
-  { id: 6, title: "Tech Career Fair", date: "2024-09-15", time: "11:00", location: "Main Hall", category: "Networking", description: "Connect with top tech companies and explore career opportunities.", status: "past" },
-]
+import { db } from '@/lib/firebase';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, arrayUnion } from "firebase/firestore"; // Firestore imports
+import Papa from "papaparse";
 
 export function EventManagement() {
-  const [events, setEvents] = useState(allEvents)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [editingEvent, setEditingEvent] = useState(null)
-  const [viewingSummary, setViewingSummary] = useState(null)
+  const [events, setEvents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [viewingSummary, setViewingSummary] = useState(null);
 
-  const filteredEvents = events.filter(event => 
+  // Real-time listener for events collection in Firestore
+  useEffect(() => {
+    const eventsCollection = collection(db, "events");
+    const unsubscribe = onSnapshot(eventsCollection, (snapshot) => {
+      const fetchedEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setEvents(fetchedEvents);
+    });
+
+    return () => unsubscribe(); // Clean up listener on component unmount
+  }, []);
+
+  const filteredEvents = events.filter(event =>
     event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    event.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    event.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const upcomingEvents = filteredEvents.filter(event => event.status === "upcoming")
-  const pastEvents = filteredEvents.filter(event => event.status === "past")
+  const now = new Date();
 
-  const handleCreateEvent = (newEvent) => {
-    setEvents([...events, { ...newEvent, id: events.length + 1, status: "upcoming" }])
-  }
+  // Filter upcoming events
+  const upcomingEvents = filteredEvents.filter(event => {
+    const eventStart = new Date(`${event.startDate}T${event.startTime}`);
+    return eventStart > now;
+  });
+  
+  // Filter current events
+  const currentEvents = filteredEvents.filter(event => {
+    const eventStart = new Date(`${event.startDate}T${event.startTime}`);
+    const eventEnd = new Date(`${event.endDate}T${event.endTime}`);
+    return eventStart <= now && eventEnd >= now;
+  });
+  
+  // Filter past events
+  const pastEvents = filteredEvents.filter(event => {
+    const eventEnd = new Date(`${event.endDate}T${event.endTime}`);
+    return eventEnd < now;
+  });
+  
+  console.log("Events",events)
+  console.log("Upcoming events", upcomingEvents);
+  console.log("Current events", currentEvents);
+  console.log("Past events", pastEvents);
+  
 
-  const handleEditEvent = (updatedEvent) => {
-    setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event))
-    setEditingEvent(null)
-  }
+  // Add new event to Firestore
+  const handleCreateEvent = async (newEvent) => {
+    await addDoc(collection(db, "events"), { ...newEvent });
+  };
 
-  const handleDeleteEvent = (id) => {
-    setEvents(events.filter(event => event.id !== id))
-  }
 
-  const handleEndEvent = (id) => {
-    setEvents(
-      events.map(event => event.id === id ? { ...event, status: "past" } : event)
-    )
-  }
+  // Update an existing event in Firestore
+  const handleEditEvent = async (updatedEvent) => {
+    const eventRef = doc(db, "events", updatedEvent.id);
+  
+    // Extract and remove leaderboardFile from updatedEvent
+    const { leaderboardFile, ...eventData } = updatedEvent;
+  
+    if (leaderboardFile) {
+      try {
+        // Parse the CSV file using PapaParse
+        const parsedData = await new Promise((resolve, reject) => {
+          Papa.parse(leaderboardFile, {
+            header: true, // Assumes the CSV has a header row
+            complete: (results) => resolve(results.data),
+            error: (error) => reject(error),
+          });
+        });
+  
+        // Filter out rows missing the "User Email" field, which is required as a unique key
+        const validLeaderboardData = parsedData
+          .filter(row => row["User Email"]) // Only keep rows with a "User Email" field
+          .map(row => ({
+            userEmail: row["User Email"], // Store as "userEmail" in Firestore
+            ...row, // Spread other columns as properties
+          }));
+  
+        // Add the leaderboard data to the event data
+        eventData.leaderboard = validLeaderboardData;
+      } catch (error) {
+        console.error("Error parsing CSV file:", error);
+        alert("Failed to parse the CSV file. Please check the file format.");
+        return; // Stop the function if there's a parsing error
+      }
+    }
+  
+    try {
+      // Update the event document in Firestore
+      await updateDoc(eventRef, eventData);
+      setEditingEvent(null);
+    } catch (error) {
+      console.error("Error updating Firestore:", error);
+      alert("Failed to update the event. Please try again.");
+    }
+  };
+  
+  
+
+  // Delete an event from Firestore
+  const handleDeleteEvent = async (id) => {
+    const eventRef = doc(db, "events", id);
+    await deleteDoc(eventRef);
+  };
+
+  // Update the event status to "past" in Firestore
+  const handleEndEvent = async (id) => {
+    const eventRef = doc(db, "events", id);
+    await updateDoc(eventRef, { status: "past" });
+  };
 
   return (
-    (<div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <section className="bg-red-600 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Event Management</h1>
@@ -82,8 +152,9 @@ export function EventManagement() {
         </div>
 
         <Tabs defaultValue="upcoming" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
+            <TabsTrigger value="current">Current Events</TabsTrigger>
             <TabsTrigger value="past">Past Events</TabsTrigger>
             <TabsTrigger value="create">Create Event</TabsTrigger>
           </TabsList>
@@ -91,6 +162,19 @@ export function EventManagement() {
           <TabsContent value="upcoming">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {upcomingEvents.map(event => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onEdit={() => setEditingEvent(event)}
+                  onDelete={() => handleDeleteEvent(event.id)}
+                  onEnd={() => handleEndEvent(event.id)} />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="current">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {currentEvents.map(event => (
                 <EventCard
                   key={event.id}
                   event={event}
@@ -129,23 +213,29 @@ export function EventManagement() {
           <EventSummaryDialog event={viewingSummary} onClose={() => setViewingSummary(null)} />
         )}
       </div>
-    </div>)
+    </div>
   );
 }
 
-function EventCard({ event, onEdit, onDelete, onEnd, onViewSummary, isPast = false }) {
+function EventCard({ event, onEdit, onDelete, onViewSummary, isPast = false }) {
   return (
-    (<Card>
+    <Card>
       <CardHeader>
         <CardTitle>{event.title}</CardTitle>
         <CardDescription>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            {event.date}
+            {event.startDate === event.endDate ? (
+              <span>{event.startDate}</span>
+            ) : (
+              <span>
+                {event.startDate} - {event.endDate}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
-            {event.time}
+            {event.startTime} - {event.endTime}
           </div>
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
@@ -165,9 +255,6 @@ function EventCard({ event, onEdit, onDelete, onEnd, onViewSummary, isPast = fal
             <Button variant="destructive" onClick={onDelete}>
               <Trash2 className="mr-2 h-4 w-4" /> Delete
             </Button>
-            <Button variant="secondary" onClick={onEnd}>
-              End Event
-            </Button>
           </>
         ) : (
           <Button variant="outline" onClick={onViewSummary}>
@@ -175,35 +262,39 @@ function EventCard({ event, onEdit, onDelete, onEnd, onViewSummary, isPast = fal
           </Button>
         )}
       </CardFooter>
-    </Card>)
+    </Card>
   );
 }
 
 function CreateEventForm({ onCreateEvent }) {
   const [newEvent, setNewEvent] = useState({
     title: "",
-    date: "",
-    time: "",
+    startDate: "",
+    startTime: "",
+    endDate: "",
+    endTime: "",
     location: "",
     category: "",
     description: "",
-  })
+  });
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onCreateEvent(newEvent)
+    e.preventDefault();
+    onCreateEvent(newEvent);
     setNewEvent({
       title: "",
-      date: "",
-      time: "",
+      startDate: "",
+      startTime: "",
+      endDate: "",
+      endTime: "",
       location: "",
       category: "",
       description: "",
-    })
-  }
+    });
+  };
 
   return (
-    (<Card>
+    <Card>
       <CardHeader>
         <CardTitle>Create New Event</CardTitle>
       </CardHeader>
@@ -218,21 +309,39 @@ function CreateEventForm({ onCreateEvent }) {
               required />
           </div>
           <div>
-            <Label htmlFor="date">Event Date</Label>
+            <Label htmlFor="date">Event Start Date</Label>
             <Input
               id="date"
               type="date"
-              value={newEvent.date}
-              onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+              value={newEvent.startDate}
+              onChange={(e) => setNewEvent({ ...newEvent, startDate: e.target.value })}
               required />
           </div>
           <div>
-            <Label htmlFor="time">Event Time</Label>
+            <Label htmlFor="time">Event Start Time</Label>
             <Input
               id="time"
               type="time"
-              value={newEvent.time}
-              onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+              value={newEvent.startTime}
+              onChange={(e) => setNewEvent({ ...newEvent, startTime: e.target.value })}
+              required />
+          </div>
+          <div>
+            <Label htmlFor="date">Event End Date</Label>
+            <Input
+              id="date"
+              type="date"
+              value={newEvent.endDate}
+              onChange={(e) => setNewEvent({ ...newEvent, endDate: e.target.value })}
+              required />
+          </div>
+          <div>
+            <Label htmlFor="time">Event End Time</Label>
+            <Input
+              id="time"
+              type="time"
+              value={newEvent.endTime}
+              onChange={(e) => setNewEvent({ ...newEvent, endTime: e.target.value })}
               required />
           </div>
           <div>
@@ -247,7 +356,8 @@ function CreateEventForm({ onCreateEvent }) {
             <Label htmlFor="category">Category</Label>
             <Select
               value={newEvent.category}
-              onValueChange={(value) => setNewEvent({ ...newEvent, category: value })}>
+              onValueChange={(value) => setNewEvent({ ...newEvent, category: value })}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
@@ -271,21 +381,22 @@ function CreateEventForm({ onCreateEvent }) {
           <Button type="submit">Create Event</Button>
         </form>
       </CardContent>
-    </Card>)
+    </Card>
   );
 }
 
 function EditEventDialog({ event, onClose, onSave }) {
-  const [editedEvent, setEditedEvent] = useState(event)
+  const [editedEvent, setEditedEvent] = useState(event);
+  const [leaderboardFile, setLeaderboardFile] = useState(null); // State to hold the CSV file
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onSave(editedEvent)
-  }
+    e.preventDefault();
+    onSave({ ...editedEvent, leaderboardFile }); // Pass leaderboardFile with other event data
+  };
 
   return (
-    (<Dialog open={true} onOpenChange={onClose}>
-      <DialogContent>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent style={{ maxHeight: '80vh', overflowY: 'auto' }}>
         <DialogHeader>
           <DialogTitle>Edit Event</DialogTitle>
         </DialogHeader>
@@ -296,25 +407,48 @@ function EditEventDialog({ event, onClose, onSave }) {
               id="edit-title"
               value={editedEvent.title}
               onChange={(e) => setEditedEvent({ ...editedEvent, title: e.target.value })}
-              required />
+              required
+            />
           </div>
           <div>
-            <Label htmlFor="edit-date">Event Date</Label>
+            <Label htmlFor="edit-start-date">Start Date</Label>
             <Input
-              id="edit-date"
+              id="edit-start-date"
               type="date"
-              value={editedEvent.date}
-              onChange={(e) => setEditedEvent({ ...editedEvent, date: e.target.value })}
-              required />
+              value={editedEvent.startDate}
+              onChange={(e) => setEditedEvent({ ...editedEvent, startDate: e.target.value })}
+              required
+            />
           </div>
           <div>
-            <Label htmlFor="edit-time">Event Time</Label>
+            <Label htmlFor="edit-start-time">Start Time</Label>
             <Input
-              id="edit-time"
+              id="edit-start-time"
               type="time"
-              value={editedEvent.time}
-              onChange={(e) => setEditedEvent({ ...editedEvent, time: e.target.value })}
-              required />
+              value={editedEvent.startTime}
+              onChange={(e) => setEditedEvent({ ...editedEvent, startTime: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="edit-end-date">End Date</Label>
+            <Input
+              id="edit-end-date"
+              type="date"
+              value={editedEvent.endDate}
+              onChange={(e) => setEditedEvent({ ...editedEvent, endDate: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="edit-end-time">End Time</Label>
+            <Input
+              id="edit-end-time"
+              type="time"
+              value={editedEvent.endTime}
+              onChange={(e) => setEditedEvent({ ...editedEvent, endTime: e.target.value })}
+              required
+            />
           </div>
           <div>
             <Label htmlFor="edit-location">Location</Label>
@@ -322,13 +456,15 @@ function EditEventDialog({ event, onClose, onSave }) {
               id="edit-location"
               value={editedEvent.location}
               onChange={(e) => setEditedEvent({ ...editedEvent, location: e.target.value })}
-              required />
+              required
+            />
           </div>
           <div>
             <Label htmlFor="edit-category">Category</Label>
             <Select
               value={editedEvent.category}
-              onValueChange={(value) => setEditedEvent({ ...editedEvent, category: value })}>
+              onValueChange={(value) => setEditedEvent({ ...editedEvent, category: value })}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
@@ -347,7 +483,18 @@ function EditEventDialog({ event, onClose, onSave }) {
               id="edit-description"
               value={editedEvent.description}
               onChange={(e) => setEditedEvent({ ...editedEvent, description: e.target.value })}
-              required />
+              required
+            />
+          </div>
+          {/* New CSV file upload field for leaderboard */}
+          <div>
+            <Label htmlFor="edit-leaderboard-file">Upload Leaderboard (CSV)</Label>
+            <Input
+              id="edit-leaderboard-file"
+              type="file"
+              accept=".csv"
+              onChange={(e) => setLeaderboardFile(e.target.files[0])} // Update state with selected file
+            />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
@@ -357,27 +504,37 @@ function EditEventDialog({ event, onClose, onSave }) {
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>)
+    </Dialog>
   );
 }
 
+
 function EventSummaryDialog({ event, onClose }) {
   return (
-    (<Dialog open={true} onOpenChange={onClose}>
+    <Dialog open={true} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{event.title} - Event Summary</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div>
-            <h4 className="font-semibold">Date and  Time</h4>
-            <p>{event.date} at {event.time}</p>
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            <h4 className="font-semibold">Date & Time:</h4>
+            {event.startDate === event.endDate ? (
+              <span>{event.startDate} from {event.startTime} to {event.endTime}</span>
+            ) : (
+              <span>
+                {event.startDate} {event.startTime} - {event.endDate} {event.endTime}
+              </span>
+            )}
           </div>
-          <div>
-            <h4 className="font-semibold">Location</h4>
+          <div className="flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
+            <h4 className="font-semibold">Location:</h4>
             <p>{event.location}</p>
           </div>
-          <div>
+          <div className="flex items-center gap-2">
+            <AlignJustify className="h-4 w-4" />
             <h4 className="font-semibold">Category</h4>
             <p>{event.category}</p>
           </div>
@@ -385,12 +542,11 @@ function EventSummaryDialog({ event, onClose }) {
             <h4 className="font-semibold">Description</h4>
             <p>{event.description}</p>
           </div>
-          {/* Add more summary details as needed */}
         </div>
         <DialogFooter>
           <Button onClick={onClose}>Close</Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>)
+    </Dialog>
   );
 }

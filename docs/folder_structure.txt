@@ -1,5 +1,6 @@
 Frontend Structure:
 └── frontend
+    ├── .env.local
     ├── .eslintrc.json
     ├── components.json
     ├── jsconfig.json
@@ -28,6 +29,7 @@ Frontend Structure:
     │   │   │   └── settings
     │   │   │       └── page.js
     │   │   ├── auth
+    │   │   │   ├── login
     │   │   │   └── signup
     │   │   │       └── page.js
     │   │   ├── blog
@@ -66,6 +68,7 @@ Frontend Structure:
     │   │   ├── community-page.jsx
     │   │   ├── contact-page.jsx
     │   │   ├── content-management.jsx
+    │   │   ├── enhanced-leaderboard.jsx
     │   │   ├── event-management.jsx
     │   │   ├── events-page.jsx
     │   │   ├── get-involved-page.jsx
