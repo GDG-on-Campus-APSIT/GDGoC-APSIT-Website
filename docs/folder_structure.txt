@@ -17,6 +17,8 @@ Frontend Structure:
     │   ├── app
     │   │   ├── admin
     │   │   │   ├── content
+    │   │   │   │   ├── add
+    │   │   │   │   │   └── page.js
     │   │   │   │   └── page.js
     │   │   │   ├── events
     │   │   │   │   └── page.js
@@ -77,6 +79,7 @@ Frontend Structure:
     │   │   ├── project-submission.jsx
     │   │   ├── recognition-management.jsx
     │   │   ├── recognition-page.jsx
+    │   │   ├── resource-form.jsx
     │   │   ├── resources-page.jsx
     │   │   ├── settings.jsx
     │   │   ├── signup.jsx
@@ -132,6 +135,7 @@ Backend Structure:
         │   ├── notificationController.js
         │   ├── resourcesController.js
         │   └── userController.js
+        ├── middleware
         ├── models
         │   ├── achievementModel.js
         │   ├── attendanceModel.js
