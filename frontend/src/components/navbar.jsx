@@ -31,14 +31,6 @@ export function NavbarComponent({ isAdmin = true }) {
     { name: 'Contact', href: '/contact' },
   ]
 
-  const adminRoutes = [
-    { name: 'Event Management', href: '/admin/events' },
-    { name: 'Member Management', href: '/admin/members' },
-    { name: 'Content Management', href: '/admin/content' },
-    { name: 'Recognition Program', href: '/admin/recognition' },
-    { name: 'Settings', href: '/admin/settings' },
-  ]
-
   const NavLinks = ({ items }) => (
     <>
       {items.map((item) => (
@@ -68,22 +60,6 @@ export function NavbarComponent({ isAdmin = true }) {
           <div className="hidden lg:flex items-center justify-center flex-1">
             <div className="flex items-center space-x-4">
               <NavLinks items={navItems} />
-              {isAdmin && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-16 flex items-center">
-                      Admin <ChevronDown className="ml-1 h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {adminRoutes.map((route) => (
-                      <DropdownMenuItem key={route.name} asChild>
-                        <Link href={route.href}>{route.name}</Link>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
             </div>
           </div>
 
@@ -152,20 +128,6 @@ export function NavbarComponent({ isAdmin = true }) {
                         {item.name}
                       </Link>
                     ))}
-                    {isAdmin && (
-                      <>
-                        <Separator className="my-2" />
-                        {adminRoutes.map((route) => (
-                          <Link
-                            key={route.name}
-                            href={route.href}
-                            className="text-black hover:text-blue-600 transition-colors"
-                            onClick={() => setIsSidebarOpen(false)}>
-                            {route.name}
-                          </Link>
-                        ))}
-                      </>
-                    )}
                   </div>
                   <div className="mt-auto p-4 border-t border-gray-200">
                     {user ? (
