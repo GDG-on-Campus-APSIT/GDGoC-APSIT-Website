@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Edit, Trash2, Search, Calendar, Clock, MapPin, AlignJustify } from 'lucide-react';
 
 import { db } from '@/lib/firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, arrayUnion } from "firebase/firestore"; // Firestore imports
+import { collection,getDoc, addDoc, updateDoc, deleteDoc, doc, onSnapshot, arrayUnion } from "firebase/firestore"; // Firestore imports
 import Papa from "papaparse";
 
 export function EventManagement() {
@@ -77,6 +77,7 @@ export function EventManagement() {
     // Extract and remove leaderboardFile from updatedEvent
     const { leaderboardFile, ...eventData } = updatedEvent;
   
+    let validLeaderboardData = [];
     if (leaderboardFile) {
       try {
         // Parse the CSV file using PapaParse
@@ -88,13 +89,30 @@ export function EventManagement() {
           });
         });
   
-        // Filter out rows missing the "User Email" field, which is required as a unique key
-        const validLeaderboardData = parsedData
+        // Normalize column names and drop unwanted columns
+        validLeaderboardData = parsedData
           .filter(row => row["User Email"]) // Only keep rows with a "User Email" field
-          .map(row => ({
-            userEmail: row["User Email"], // Store as "userEmail" in Firestore
-            ...row, // Spread other columns as properties
-          }));
+          .map(row => {
+            const normalizedRow = {
+              "User Name": row["User Name"] || row["User Name"], // Retain as is
+              "User Email": row["User Email"], // Standardized field
+              "Google Cloud Skills Boost Profile URL": row["Google Cloud Skills Boost Profile URL"],
+              "Profile URL Status": row["Profile URL Status"],
+              "Access Code Redemption Status": row["Access Code Redemption Status"],
+              "No. of Skill Badges Completed": row["# of Skill Badges Completed"] || row["No. of Skill Badges Completed"],
+              "No. of Arcade Games Completed": row["# of Arcade Games Completed"] || row["No. of Arcade Games Completed"],
+              "Total Completion": row["All Skill Badges & Games Completed"] || row["Total Completion"],
+            };
+  
+            // Remove undefined or null values
+            Object.keys(normalizedRow).forEach(key => {
+              if (normalizedRow[key] === undefined || normalizedRow[key] === null) {
+                delete normalizedRow[key];
+              }
+            });
+  
+            return normalizedRow;
+          });
   
         // Add the leaderboard data to the event data
         eventData.leaderboard = validLeaderboardData;
@@ -106,9 +124,56 @@ export function EventManagement() {
     }
   
     try {
+      // Retrieve the existing event data
+      const eventSnap = await getDoc(eventRef);
+      const existingData = eventSnap.exists() ? eventSnap.data() : {};
+      const { history = [] } = existingData;
+  
+      // Get today's date in ISO format
+      const today = new Date().toISOString().split("T")[0];
+  
+      // Calculate aggregate stats
+      const totalParticipants = validLeaderboardData.length;
+      const totalBadges = validLeaderboardData.reduce(
+        (sum, row) => sum + (parseInt(row["No. of Skill Badges Completed"] || 0) || 0),
+        0
+      );
+      const totalGames = validLeaderboardData.reduce(
+        (sum, row) => sum + (parseInt(row["No. of Arcade Games Completed"] || 0) || 0),
+        0
+      );
+      const completionRate = totalParticipants
+        ? ((validLeaderboardData.filter(row => row["Total Completion"] === "Yes").length / totalParticipants) * 100).toFixed(1)
+        : 0;
+  
+      const dailyStats = {
+        date: today,
+        participants: validLeaderboardData, // Store today's participant data
+        stats: {
+          totalParticipants,
+          totalBadges,
+          totalGames,
+          completionRate,
+        },
+      };
+  
+      // Update history: Check if there's an entry for today
+      const existingEntryIndex = history.findIndex(entry => entry.date === today);
+      if (existingEntryIndex !== -1) {
+        history[existingEntryIndex] = dailyStats; // Update today's entry
+      } else {
+        history.push(dailyStats); // Add a new entry for today
+      }
+  
+      // Update the event data
+      eventData.history = history;
+      eventData.modified = new Date(); // Add the modified timestamp
+  
       // Update the event document in Firestore
       await updateDoc(eventRef, eventData);
       setEditingEvent(null);
+  
+      console.log("Event updated successfully, including history and modified fields.");
     } catch (error) {
       console.error("Error updating Firestore:", error);
       alert("Failed to update the event. Please try again.");
