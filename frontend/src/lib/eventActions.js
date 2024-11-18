@@ -1,16 +1,25 @@
-import { addDoc, updateDoc, deleteDoc, getDoc, doc, collection } from "firebase/firestore"
-import { db } from '@/lib/firebase'
-import Papa from "papaparse"
+import { addDoc, updateDoc, deleteDoc, getDoc, doc, collection } from "firebase/firestore";
+import { db } from '@/lib/firebase';
+import Papa from "papaparse";
 
 export const handleCreateEvent = async (newEvent) => {
-  await addDoc(collection(db, "events"), { ...newEvent })
-}
+  await addDoc(collection(db, "events"), { ...newEvent });
+};
 
 export const handleEditEvent = async (updatedEvent) => {
-  const eventRef = doc(db, "events", updatedEvent.id)
-  const { leaderboardFile, ...eventData } = updatedEvent
+  const eventRef = doc(db, "events", updatedEvent.id);
+  const { leaderboardFile, sendMail, ...eventData } = updatedEvent;
 
-  let validLeaderboardData = []
+  // Handle Date TBA logic
+  if (eventData.dateTBA) {
+    eventData.startDate = null;
+    eventData.startTime = null;
+    eventData.endDate = null;
+    eventData.endTime = null;
+  }
+
+  // Parse leaderboard file if provided
+  let validLeaderboardData = [];
   if (leaderboardFile) {
     try {
       const parsedData = await new Promise((resolve, reject) => {
@@ -18,8 +27,8 @@ export const handleEditEvent = async (updatedEvent) => {
           header: true,
           complete: (results) => resolve(results.data),
           error: (error) => reject(error),
-        })
-      })
+        });
+      });
 
       validLeaderboardData = parsedData
         .filter(row => row["User Email"])
@@ -32,34 +41,34 @@ export const handleEditEvent = async (updatedEvent) => {
           "No. of Skill Badges Completed": row["# of Skill Badges Completed"] || row["No. of Skill Badges Completed"],
           "No. of Arcade Games Completed": row["# of Arcade Games Completed"] || row["No. of Arcade Games Completed"],
           "Total Completion": row["All Skill Badges & Games Completed"] || row["Total Completion"],
-        }))
+        }));
 
-      eventData.leaderboard = validLeaderboardData
+      eventData.leaderboard = validLeaderboardData;
     } catch (error) {
-      console.error("Error parsing CSV file:", error)
-      throw new Error("Failed to parse the CSV file. Please check the file format.")
+      console.error("Error parsing CSV file:", error);
+      throw new Error("Failed to parse the CSV file. Please check the file format.");
     }
   }
 
   try {
-    const eventSnap = await getDoc(eventRef)
-    const existingData = eventSnap.exists() ? eventSnap.data() : {}
-    const { history = [] } = existingData
+    const eventSnap = await getDoc(eventRef);
+    const existingData = eventSnap.exists() ? eventSnap.data() : {};
+    const { history = [] } = existingData;
 
-    const today = new Date().toISOString().split("T")[0]
+    const today = new Date().toISOString().split("T")[0];
 
-    const totalParticipants = validLeaderboardData.length
+    const totalParticipants = validLeaderboardData.length;
     const totalBadges = validLeaderboardData.reduce(
       (sum, row) => sum + (parseInt(row["No. of Skill Badges Completed"] || 0) || 0),
       0
-    )
+    );
     const totalGames = validLeaderboardData.reduce(
       (sum, row) => sum + (parseInt(row["No. of Arcade Games Completed"] || 0) || 0),
       0
-    )
+    );
     const completionRate = totalParticipants
       ? ((validLeaderboardData.filter(row => row["Total Completion"] === "Yes").length / totalParticipants) * 100).toFixed(1)
-      : 0
+      : 0;
 
     const dailyStats = {
       date: today,
@@ -70,31 +79,42 @@ export const handleEditEvent = async (updatedEvent) => {
         totalGames,
         completionRate,
       },
-    }
+    };
 
-    const existingEntryIndex = history.findIndex(entry => entry.date === today)
+    const existingEntryIndex = history.findIndex(entry => entry.date === today);
     if (existingEntryIndex !== -1) {
-      history[existingEntryIndex] = dailyStats
+      history[existingEntryIndex] = dailyStats;
     } else {
-      history.push(dailyStats)
+      history.push(dailyStats);
     }
 
-    eventData.history = history
-    eventData.modified = new Date()
+    eventData.history = history;
+    eventData.modified = new Date();
 
-    await updateDoc(eventRef, eventData)
+    await updateDoc(eventRef, eventData);
+
+    // Trigger email notifications if sendMail is true
+    if (sendMail) {
+      await sendEmailToParticipants(validLeaderboardData);
+    }
   } catch (error) {
-    console.error("Error updating Firestore:", error)
-    throw new Error("Failed to update the event. Please try again.")
+    console.error("Error updating Firestore:", error);
+    throw new Error("Failed to update the event. Please try again.");
   }
-}
+};
 
 export const handleDeleteEvent = async (id) => {
-  const eventRef = doc(db, "events", id)
-  await deleteDoc(eventRef)
-}
+  const eventRef = doc(db, "events", id);
+  await deleteDoc(eventRef);
+};
 
 export const handleEndEvent = async (id) => {
-  const eventRef = doc(db, "events", id)
-  await updateDoc(eventRef, { status: "past" })
-}
+  const eventRef = doc(db, "events", id);
+  await updateDoc(eventRef, { status: "past" });
+};
+
+// Placeholder function for sending email to participants
+export const sendEmailToParticipants = async (participants) => {
+  console.log("Sending emails to participants:", participants);
+  // Implementation will be added here later.
+};

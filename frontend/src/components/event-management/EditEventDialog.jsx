@@ -1,22 +1,39 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { handleEditEvent } from '@/lib/eventActions'
 
 export function EditEventDialog({ event, onClose }) {
   const [editedEvent, setEditedEvent] = useState(event)
   const [leaderboardFile, setLeaderboardFile] = useState(null)
+  const [dateTBA, setDateTBA] = useState(false)
+  const [sendMail, setSendMail] = useState(false)
+  const [customCategory, setCustomCategory] = useState('')
+
+  useEffect(() => {
+    if (dateTBA) {
+      setEditedEvent(prev => ({
+        ...prev,
+        startDate: '',
+        startTime: '',
+        endDate: '',
+        endTime: ''
+      }))
+    }
+  }, [dateTBA])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await handleEditEvent({ ...editedEvent, leaderboardFile })
+      const finalCategory = editedEvent.category === 'custom' ? customCategory : editedEvent.category
+      await handleEditEvent({ ...editedEvent, leaderboardFile, category: finalCategory, sendMail })
       onClose()
     } catch (error) {
       console.error("Failed to edit event:", error)
@@ -26,7 +43,7 @@ export function EditEventDialog({ event, onClose }) {
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Event</DialogTitle>
         </DialogHeader>
@@ -40,46 +57,58 @@ export function EditEventDialog({ event, onClose }) {
               required
             />
           </div>
-          <div>
-            <Label htmlFor="edit-start-date">Start Date</Label>
-            <Input
-              id="edit-start-date"
-              type="date"
-              value={editedEvent.startDate}
-              onChange={(e) => setEditedEvent({ ...editedEvent, startDate: e.target.value })}
-              required
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="date-tba"
+              checked={dateTBA}
+              onCheckedChange={setDateTBA}
             />
+            <Label htmlFor="date-tba">Date TBA</Label>
           </div>
-          <div>
-            <Label htmlFor="edit-start-time">Start Time</Label>
-            <Input
-              id="edit-start-time"
-              type="time"
-              value={editedEvent.startTime}
-              onChange={(e) => setEditedEvent({ ...editedEvent, startTime: e.target.value })}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="edit-end-date">End Date</Label>
-            <Input
-              id="edit-end-date"
-              type="date"
-              value={editedEvent.endDate}
-              onChange={(e) => setEditedEvent({ ...editedEvent, endDate: e.target.value })}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="edit-end-time">End Time</Label>
-            <Input
-              id="edit-end-time"
-              type="time"
-              value={editedEvent.endTime}
-              onChange={(e) => setEditedEvent({ ...editedEvent, endTime: e.target.value })}
-              required
-            />
-          </div>
+          {!dateTBA && (
+            <>
+              <div>
+                <Label htmlFor="edit-start-date">Start Date</Label>
+                <Input
+                  id="edit-start-date"
+                  type="date"
+                  value={editedEvent.startDate}
+                  onChange={(e) => setEditedEvent({ ...editedEvent, startDate: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-start-time">Start Time</Label>
+                <Input
+                  id="edit-start-time"
+                  type="time"
+                  value={editedEvent.startTime}
+                  onChange={(e) => setEditedEvent({ ...editedEvent, startTime: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-end-date">End Date</Label>
+                <Input
+                  id="edit-end-date"
+                  type="date"
+                  value={editedEvent.endDate}
+                  onChange={(e) => setEditedEvent({ ...editedEvent, endDate: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-end-time">End Time</Label>
+                <Input
+                  id="edit-end-time"
+                  type="time"
+                  value={editedEvent.endTime}
+                  onChange={(e) => setEditedEvent({ ...editedEvent, endTime: e.target.value })}
+                  required
+                />
+              </div>
+            </>
+          )}
           <div>
             <Label htmlFor="edit-location">Location</Label>
             <Input
@@ -93,7 +122,12 @@ export function EditEventDialog({ event, onClose }) {
             <Label htmlFor="edit-category">Category</Label>
             <Select
               value={editedEvent.category}
-              onValueChange={(value) => setEditedEvent({ ...editedEvent, category: value })}
+              onValueChange={(value) => {
+                setEditedEvent({ ...editedEvent, category: value })
+                if (value === 'custom') {
+                  setCustomCategory('')
+                }
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
@@ -104,9 +138,21 @@ export function EditEventDialog({ event, onClose }) {
                 <SelectItem value="hackathon">Hackathon</SelectItem>
                 <SelectItem value="seminar">Seminar</SelectItem>
                 <SelectItem value="networking">Networking</SelectItem>
+                <SelectItem value="custom">Custom</SelectItem>
               </SelectContent>
             </Select>
           </div>
+          {editedEvent.category === 'custom' && (
+            <div>
+              <Label htmlFor="edit-custom-category">Custom Category</Label>
+              <Input
+                id="edit-custom-category"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                required
+              />
+            </div>
+          )}
           <div>
             <Label htmlFor="edit-description">Description</Label>
             <Textarea
@@ -125,6 +171,16 @@ export function EditEventDialog({ event, onClose }) {
               onChange={(e) => setLeaderboardFile(e.target.files[0])}
             />
           </div>
+          {leaderboardFile && (
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="send-mail"
+                checked={sendMail}
+                onCheckedChange={setSendMail}
+              />
+              <Label htmlFor="send-mail">Send Mail</Label>
+            </div>
+          )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
