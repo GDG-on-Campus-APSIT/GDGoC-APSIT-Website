@@ -80,7 +80,6 @@ export const handleEditEvent = async (updatedEvent) => {
         completionRate,
       },
     };
-
     const existingEntryIndex = history.findIndex(entry => entry.date === today);
     if (existingEntryIndex !== -1) {
       history[existingEntryIndex] = dailyStats;
@@ -95,7 +94,7 @@ export const handleEditEvent = async (updatedEvent) => {
 
     // Trigger email notifications if sendMail is true
     if (sendMail) {
-      await sendEmailToParticipants(validLeaderboardData);
+      await sendEmailToParticipants(validLeaderboardData, dailyStats, eventData.title || "The Event",eventData.id);
     }
   } catch (error) {
     console.error("Error updating Firestore:", error);
@@ -114,7 +113,26 @@ export const handleEndEvent = async (id) => {
 };
 
 // Placeholder function for sending email to participants
-export const sendEmailToParticipants = async (participants) => {
-  console.log("Sending emails to participants:", participants);
-  // Implementation will be added here later.
+export const sendEmailToParticipants = async (participants, dailyStats, eventName,eventId) => {
+  try {
+    const response = await fetch("/api/sendMail", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ participants, dailyStats, eventName, eventId }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to send emails");
+    }
+
+    console.log("Emails sent successfully:", data.message);
+    return { success: true };
+  } catch (error) {
+    console.error("Error in sendEmailToParticipants:", error.message);
+    return { success: false, error: error.message };
+  }
 };
+
