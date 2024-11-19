@@ -50,9 +50,14 @@ export function EventCard({ event, isPast = false }) {
               </Button>
             </>
           ) : (
-            <Button variant="outline" onClick={() => setIsViewingSummary(true)}>
-              View Summary
-            </Button>
+            <>
+              <Button variant="outline" onClick={() => setIsViewingSummary(true)}>
+                View Summary
+              </Button>
+              <Button variant="outline" onClick={() => setIsEditing(true)}>
+                <Edit className="mr-2 h-4 w-4" /> Edit
+              </Button>
+            </>
           )}
         </CardFooter>
       </Card>

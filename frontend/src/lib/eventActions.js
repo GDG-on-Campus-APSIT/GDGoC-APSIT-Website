@@ -112,7 +112,7 @@ export const handleEndEvent = async (id) => {
   await updateDoc(eventRef, { status: "past" });
 };
 
-// Placeholder function for sending email to participants
+//function for sending email to participants
 export const sendEmailToParticipants = async (participants, dailyStats, eventName,eventId) => {
   try {
     const response = await fetch("/api/sendMail", {
@@ -135,4 +135,23 @@ export const sendEmailToParticipants = async (participants, dailyStats, eventNam
     return { success: false, error: error.message };
   }
 };
+
+
+export async function getEventDetails(eventId) {
+  console.log("Getting event details")
+  try {
+    const eventDoc = doc(db, "events", eventId)
+    const docSnap = await getDoc(eventDoc)
+
+    if (docSnap.exists()) {
+      return { id: eventId, ...docSnap.data() }
+    } else {
+      console.error("No such document!")
+      return null
+    }
+  } catch (error) {
+    console.error("Error fetching event details:", error)
+    return null
+  }
+}
 

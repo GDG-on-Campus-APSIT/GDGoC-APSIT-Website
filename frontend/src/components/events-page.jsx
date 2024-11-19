@@ -79,9 +79,9 @@ export function EventsPageComponent() {
         </div>
         <Tabs defaultValue="upcoming" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
-            <TabsTrigger value="current">Current Events</TabsTrigger>
-            <TabsTrigger value="past">Past Events</TabsTrigger>
+            <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+            <TabsTrigger value="current">Current</TabsTrigger>
+            <TabsTrigger value="past">Past</TabsTrigger>
           </TabsList>
 
           
