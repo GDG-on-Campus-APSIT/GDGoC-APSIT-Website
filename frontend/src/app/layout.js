@@ -1,6 +1,8 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -15,18 +17,26 @@ const geistMono = localFont({
 
 export const metadata = {
   title: "GDGoC APSIT",
-  description: "GDGoC APSIT website for events,community,resources and recognition.",
+  description: "GDGoC APSIT website for events, community, resources, and recognition.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        {/* Link to the manifest.json */}
+        <link rel="manifest" href="/manifest.json" />
+        {/* Favicon for the app */}
+        <link rel="icon" href="/favicon.ico" />
+        {/* Additional meta tags for PWA */}
+        <meta name="theme-color" content="#000000" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <AuthProvider>{children}</AuthProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

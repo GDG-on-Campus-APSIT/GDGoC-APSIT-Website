@@ -37,6 +37,11 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --color-completed: hsl(120, 100%, 40%);  /* Darker Green */
+    --color-not-completed: hsl(61, 100%, 70%);  /* Lighter Yellow */
+    --color-skill-badges: #2980b9;  /* Darker Blue */
+    --color-arcade-games: #c0392b;  /* Darker Red */
+    
   }
 
   .dark {

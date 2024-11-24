@@ -63,7 +63,7 @@ export function HomepageComponent() {
                 <CardDescription>October 26, 2024</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>We're excited to announce our new partnership with TechCorp, bringing more opportunities to our members!</p>
+                <p>We&apos;re excited to announce our new partnership with TechCorp, bringing more opportunities to our members!</p>
               </CardContent>
             </Card>
             <Card>
