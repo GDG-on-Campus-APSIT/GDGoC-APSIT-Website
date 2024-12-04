@@ -7,16 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+
 import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Calendar, Code, Star, Trophy, Medal, Briefcase, Users, Mic, Github } from 'lucide-react';
+  Calendar, Code, Star, Briefcase, Users, Mic, Github } from 'lucide-react';
+import LeaderboardRecognition from './leaderboard-recognition'
 
 const achievements = [
   { name: "Code Ninja", description: "Completed 10 coding challenges", icon: Code },
@@ -27,13 +21,6 @@ const achievements = [
   { name: "Open Source Contributor", description: "Made 5 open source contributions", icon: Github },
 ]
 
-const leaderboard = [
-  { rank: 1, name: "Aarav Patel", points: 1250, badges: 8 },
-  { rank: 2, name: "Zara Khan", points: 1150, badges: 7 },
-  { rank: 3, name: "Rohan Sharma", points: 1050, badges: 6 },
-  { rank: 4, name: "Priya Desai", points: 950, badges: 5 },
-  { rank: 5, name: "Arjun Mehta", points: 850, badges: 4 },
-]
 
 const hallOfFame = [
   { name: "Vikram Malhotra", achievement: "Google Summer of Code Mentor", year: 2023, image: "/placeholder.svg" },
@@ -113,43 +100,10 @@ export function RecognitionPageComponent() {
             )}
           </TabsContent>
 
-          {/* Leaderboard */}
-          <TabsContent value="leaderboard">
-            <Card>
-              <CardHeader>
-                <CardTitle>GDGoC APSIT Leaderboard</CardTitle>
-                <CardDescription>Top contributors in our community</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableCaption>Top 5 contributors as of {new Date().toLocaleDateString()}</TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">Rank</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Points</TableHead>
-                      <TableHead className="text-right">Badges</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {leaderboard.map((member) => (
-                      <TableRow key={member.rank}>
-                        <TableCell className="font-medium">
-                          {member.rank === 1 && <Trophy className="inline-block mr-2 text-yellow-500" />}
-                          {member.rank === 2 && <Medal className="inline-block mr-2 text-gray-400" />}
-                          {member.rank === 3 && <Medal className="inline-block mr-2 text-yellow-600" />}
-                          {member.rank}
-                        </TableCell>
-                        <TableCell>{member.name}</TableCell>
-                        <TableCell>{member.points}</TableCell>
-                        <TableCell className="text-right">{member.badges}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+          <LeaderboardRecognition />
+
+
+
 
           {/* Hall of Fame */}
           <TabsContent value="hall-of-fame">
