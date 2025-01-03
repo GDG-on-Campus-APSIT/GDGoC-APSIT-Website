@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Github, Linkedin, Mail, MapPin, Phone, User } from 'lucide-react';
+import { useAuthContext } from "@/context/AuthContext"
+
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 // Mock user data
 const userData = {
@@ -45,6 +48,12 @@ const userData = {
 
 export function ProfilePageComponent() {
   const [activeTab, setActiveTab] = useState("overview")
+  const { user, signInWithGoogle, signOutUser } = useAuthContext()
+  console.log(user)
+
+  if (!user) {
+    return <div>Loading...</div>
+  }
 
   return (
     (<div className="min-h-screen bg-gray-50">
@@ -52,19 +61,17 @@ export function ProfilePageComponent() {
       <section className="bg-blue-600 text-white py-20">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center gap-8">
-            <Image
-              src={userData.avatar}
-              alt={userData.name}
-              width={200}
-              height={200}
-              className="rounded-full border-4 border-white" />
+          <Avatar className="h-32 w-32">
+              <AvatarImage src={user.photoURL || userData.avatar} alt={user.displayName || userData.name} />
+              <AvatarFallback>{(user.displayName || userData.name)?.charAt(0)}</AvatarFallback>
+            </Avatar>
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-2">{userData.name}</h1>
+              <h1 className="text-4xl md:text-5xl font-bold mb-2">{user.displayName}</h1>
               <p className="text-xl mb-4">{userData.role}</p>
               <div className="flex flex-wrap gap-4">
                 <Badge variant="secondary" className="text-sm">
                   <Mail className="w-4 h-4 mr-1" />
-                  {userData.email}
+                  {user.email}
                 </Badge>
                 <Badge variant="secondary" className="text-sm">
                   <Phone className="w-4 h-4 mr-1" />
@@ -166,6 +173,7 @@ export function ProfilePageComponent() {
                       <TableHead>Event Name</TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead>Role</TableHead>
+                      <TableHead>Certificate</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -174,6 +182,7 @@ export function ProfilePageComponent() {
                         <TableCell>{event.name}</TableCell>
                         <TableCell>{new Date(event.date).toLocaleDateString()}</TableCell>
                         <TableCell>{event.role}</TableCell>
+                        <TableCell><Button>View</Button></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
