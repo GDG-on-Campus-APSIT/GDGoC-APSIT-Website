@@ -36,6 +36,13 @@ const Certificate = ({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+      {/* Download Button */}
+      <button
+        onClick={downloadCertificate}
+        className="mb-8 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        Download Certificate
+      </button>
       <div 
         ref={certificateRef} 
         className="w-full max-w-5xl bg-white rounded-2xl shadow-lg relative overflow-hidden"
@@ -113,13 +120,6 @@ const Certificate = ({
         </div>
       </div>
 
-      {/* Download Button */}
-      <button
-        onClick={downloadCertificate}
-        className="mt-8 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        Download Certificate
-      </button>
     </div>
   );
 };
