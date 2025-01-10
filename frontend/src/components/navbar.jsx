@@ -23,12 +23,6 @@ export function NavbarComponent({ isAdmin = true }) {
 
   const navItems = [
     { name: 'Events', href: '/events' },
-    { name: 'Resources', href: '/resources' },
-    { name: 'Community', href: '/community' },
-    { name: 'Recognition Program', href: '/recognition' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Get Involved', href: '/get-involved' },
-    { name: 'Contact', href: '/contact' },
   ]
 
   const adminRoutes = [
@@ -68,22 +62,6 @@ export function NavbarComponent({ isAdmin = true }) {
           <div className="hidden lg:flex items-center justify-center flex-1">
             <div className="flex items-center space-x-4">
               <NavLinks items={navItems} />
-              {isAdmin && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-16 flex items-center">
-                      Admin <ChevronDown className="ml-1 h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {adminRoutes.map((route) => (
-                      <DropdownMenuItem key={route.name} asChild>
-                        <Link href={route.href}>{route.name}</Link>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
             </div>
           </div>
 
