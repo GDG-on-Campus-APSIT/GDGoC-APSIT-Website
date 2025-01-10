@@ -3,14 +3,16 @@
 import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Calendar, Clock, MapPin, Edit, Trash2 } from 'lucide-react'
+import { Calendar, Clock, MapPin, Edit, Trash2, ShieldCheck  } from 'lucide-react'
 import { EditEventDialog } from './EditEventDialog'
 import { EventSummaryDialog } from './EventSummaryDialog'
+import { IssueCertificateDialog } from './IssueCertificateDialog'
 import { handleEditEvent, handleDeleteEvent, handleEndEvent } from '@/lib/eventActions'
 
 export function EventCard({ event, isPast = false }) {
   const [isEditing, setIsEditing] = useState(false)
   const [isViewingSummary, setIsViewingSummary] = useState(false)
+  const [isIssuingCertificate, setIsIssuingCertificate] = useState(false)
 
   return (
     <>
@@ -57,6 +59,9 @@ export function EventCard({ event, isPast = false }) {
               <Button variant="outline" onClick={() => setIsEditing(true)}>
                 <Edit className="mr-2 h-4 w-4" /> Edit
               </Button>
+              <Button variant="outline" onClick={() => setIsIssuingCertificate(true)}>
+                <ShieldCheck  className="mr-2 h-4 w-4" /> Issue Certificate
+              </Button>
             </>
           )}
         </CardFooter>
@@ -72,6 +77,12 @@ export function EventCard({ event, isPast = false }) {
         <EventSummaryDialog
           event={event}
           onClose={() => setIsViewingSummary(false)}
+        />
+      )}
+      {isIssuingCertificate && (
+        <IssueCertificateDialog
+          eventId={event.id}
+          onClose={() => setIsIssuingCertificate(false)}
         />
       )}
     </>
