@@ -2,14 +2,7 @@ import nodemailer from 'nodemailer';
 
 export async function POST(req) {
   try {
-    const { recipientName, recipientEmail, certificateId, eventId } = await req.json();
-
-    // Generate unique verification URL
-    const verificationUrl = `https://yourwebsite.com/verify/${certificateId}`;
-
-    // Generate certificate image (mocked; use a rendering method)
-    const certificateBuffer = Buffer.from(`Certificate for ${recipientName}`, 'utf-8'); // Replace with actual certificate image
-
+    const { recipientName, recipientEmail, certificateId, eventName } = await req.json();
     // Email Configuration
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
@@ -22,10 +15,10 @@ export async function POST(req) {
     await transporter.sendMail({
         from: process.env.EMAIL,
         to: recipientEmail,
-        subject: 'Your Certificate of Completion',
+        subject: `Your Certificate of Completion of ${eventName}`,
         text: `Congratulations ${recipientName}!
       
-      Your certificate is now available online. Click the link below to view and download your certificate:
+      Your certificate for successfully attending/completing ${eventName} is now available online. Click the link below to view and download your certificate:
       
       ${process.env.BASE_URL}/certificate/${certificateId}
       

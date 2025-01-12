@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react';
 import html2canvas from 'html2canvas';
-import { QRCodeSVG } from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const Certificate = ({
   recipientName,
@@ -25,12 +25,15 @@ const Certificate = ({
 
   const downloadCertificate = () => {
     if (certificateRef.current) {
-      html2canvas(certificateRef.current).then((canvas) => {
-        const link = document.createElement('a');
-        link.download = 'certificate.png';
-        link.href = canvas.toDataURL('image/png');
+      html2canvas(certificateRef.current, {
+        backgroundColor: null, // Ensures the original design's background is captured
+        useCORS: true, // Handles external assets like images
+      }).then((canvas) => {
+        const link = document.createElement("a");
+        link.download = "certificate.png";
+        link.href = canvas.toDataURL("image/png");
         link.click();
-      });
+      });      
     }
   };
 
@@ -43,9 +46,10 @@ const Certificate = ({
       >
         Download Certificate
       </button>
-      <div 
-        ref={certificateRef} 
+      <div
+        ref={certificateRef}
         className="w-full max-w-5xl bg-white rounded-2xl shadow-lg relative overflow-hidden"
+        style={{ backgroundColor: "white" }} // Added inline style for solid background
       >
         {/* Colored Corners */}
         <div className="absolute top-0 left-0 w-48 h-48 bg-red-400 -translate-x-24 -translate-y-24 rotate-45" />
@@ -109,7 +113,7 @@ const Certificate = ({
 
           {/* QR Code and Date */}
           <div className="text-center">
-            <QRCodeSVG
+            <QRCodeCanvas
               value={verificationUrl}
               size={100}
               className="mx-auto mb-2"
@@ -119,10 +123,8 @@ const Certificate = ({
           </div>
         </div>
       </div>
-
     </div>
   );
 };
 
 export default Certificate;
-
