@@ -79,9 +79,11 @@ export function EventCard({ event, isPast = false }) {
           onClose={() => setIsViewingSummary(false)}
         />
       )}
+
       {isIssuingCertificate && (
         <IssueCertificateDialog
           eventId={event.id}
+          eventName={event.title}
           onClose={() => setIsIssuingCertificate(false)}
         />
       )}
