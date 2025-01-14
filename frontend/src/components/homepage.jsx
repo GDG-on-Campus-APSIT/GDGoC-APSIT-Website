@@ -1,23 +1,56 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar, Users, BookOpen, Award } from 'lucide-react'
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from '@/lib/firebase';
 
 export function HomepageComponent() {
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+
+      try {
+        const currentDate = new Date().toISOString(); // Get the current date
+        const eventsRef = collection(db, "events"); // Firestore collection
+        const eventsQuery = query(eventsRef, where("startDate", ">=", currentDate)); // Query for upcoming events
+        const querySnapshot = await getDocs(eventsQuery);
+
+        const events = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setUpcomingEvents(events);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   return (
-    (<div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <section className="bg-blue-600 text-white py-20">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Welcome to GDGoC APSIT</h1>
           <p className="text-xl mb-8">Empowering students through technology and innovation</p>
           <Button asChild>
-            <Link href="/join">Join GDGoC APSIT</Link>
+            <Link href="https://gdg.community.dev/gdg-on-campus-ap-shah-institute-of-technology-thane-india/">Join GDGoC APSIT</Link>
           </Button>
         </div>
       </section>
+
       {/* Mission Statement */}
       <section className="py-16">
         <div className="container mx-auto px-4">
@@ -27,31 +60,34 @@ export function HomepageComponent() {
           </p>
         </div>
       </section>
+
       {/* Upcoming Events */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Upcoming Events</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((event) => (
-              <Card key={event}>
-                <CardHeader>
-                  <CardTitle>Tech Talk: AI in Web Development</CardTitle>
-                  <CardDescription>Date: November 15, 2024</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>Join us for an exciting discussion on the latest AI trends in web development.</p>
-                  <Button className="mt-4" variant="outline">Learn More</Button>
-                </CardContent>
-              </Card>
-            ))}
+      {upcomingEvents.length > 0 && (
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-8">Upcoming Events</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {upcomingEvents.map((event) => (
+                <Card key={event.id}>
+                  <CardHeader>
+                    <CardTitle>{event.title}</CardTitle>
+                    <CardDescription>Date: {new Date(event.startDate).toLocaleDateString()}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{event.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <Button asChild variant="outline">
+                <Link href="/events">View All Events</Link>
+              </Button>
+            </div>
           </div>
-          <div className="text-center mt-8">
-            <Button asChild variant="outline">
-              <Link href="/events">View All Events</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
+
       {/* Recent News */}
       <section className="py-16 bg-gray-100">
         <div className="container mx-auto px-4">
@@ -63,21 +99,22 @@ export function HomepageComponent() {
                 <CardDescription>October 26, 2024</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>We&apos;re excited to announce our new partnership with TechCorp, bringing more opportunities to our members!</p>
+                <p>We&apos;re excited to announce our new partnership with Flutter Roadshow, bringing more opportunities to our members!</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Hackathon Winners Announced</CardTitle>
+                <CardTitle>StudyJam Milestone</CardTitle>
                 <CardDescription>October 20, 2024</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Congratulations to Team Innovators for winning our annual hackathon with their groundbreaking project!</p>
+                <p>With over 80+ Completions GDGoC-APSIT has managed to secure a position in Top 10 GDG across India!</p>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
+
       {/* Features */}
       <section className="py-16">
         <div className="container mx-auto px-4">
@@ -106,6 +143,7 @@ export function HomepageComponent() {
           </div>
         </div>
       </section>
+
       {/* Call to Action */}
       <section className="py-20 bg-blue-600 text-white">
         <div className="container mx-auto px-4 text-center">
@@ -116,6 +154,6 @@ export function HomepageComponent() {
           </Button>
         </div>
       </section>
-    </div>)
+    </div>
   );
 }
