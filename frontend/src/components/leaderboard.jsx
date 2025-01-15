@@ -60,16 +60,68 @@ export function EnhancedLeaderboard({eventId, eventTitle="Hello"}) {
   }, [eventId])
 
   // Sort participants
+  
   const sortedParticipants = [...participants].sort((a, b) => {
-    if (sortBy === 'badges') {
-      return parseInt(b["No. of Skill Badges Completed"]) - parseInt(a["No. of Skill Badges Completed"])
+    // Primary sorting: Prioritize participants with "Yes" in "Total Completion"
+    if (a["Total Completion"] === "Yes" && b["Total Completion"] !== "Yes") {
+        return -1; // a comes before b
     }
-    return parseInt(b["No. of Arcade Games Completed"]) - parseInt(a["No. of Arcade Games Completed"])
-  })
+    if (a["Total Completion"] !== "Yes" && b["Total Completion"] === "Yes") {
+        return 1; // b comes before a
+    }
 
+    // Secondary sorting: Sort by completion date
+    const dateA = new Date(a["Completion Date"]);
+    const dateB = new Date(b["Completion Date"]);
+    if (dateA && dateB) {
+        return dateA - dateB; // Earlier date comes first
+    }
+
+    // Tertiary sorting: Sort by badges or arcade games
+    if (sortBy === 'badges') {
+        return parseInt(b["No. of Skill Badges Completed"]) - parseInt(a["No. of Skill Badges Completed"]);
+    } else {
+        return parseInt(b["No. of Arcade Games Completed"]) - parseInt(a["No. of Arcade Games Completed"]);
+    }
+});
+
+
+/*
+
+const newlyCompleted = newParticipants.filter(participant =>
+  participant.status === "Yes" &&
+  !historicalData.some(h => h.name === participant.name && h.status === "Yes")
+);
+
+// Sort newly completed by completion date (earliest first)
+newlyCompleted.sort((a, b) => a.date - b.date);
+
+// Assign ranks to new completions starting from the last rank
+const lastRank = historicalData.length > 0
+  ? Math.max(...historicalData.map(h => h.rank || 0))
+  : 0;
+
+newlyCompleted.forEach((participant, index) => {
+  participant.rank = lastRank + index + 1;
+});
+
+// Merge historical data and newly completed participants
+historicalData = [...historicalData, ...newlyCompleted];
+
+// Sort the historical data by rank for display
+historicalData.sort((a, b) => a.rank - b.rank);
+
+return historicalData;
+*/
+
+
+
+  
   // Filter participants
   const filteredParticipants = sortedParticipants.filter(participant => 
-    participant["User Name"].toLowerCase().includes(search.toLowerCase()))
+     participant["User Name"].toLowerCase().includes(search.toLowerCase()))
+
+
 
   const latestStats = historicalData.length > 0 ? historicalData[historicalData.length - 1].stats : {
     totalParticipants: 0,
@@ -337,6 +389,7 @@ export function EnhancedLeaderboard({eventId, eventTitle="Hello"}) {
             <TableRow className="bg-muted">
               <TableHead className="w-12 text-center">Rank</TableHead>
               <TableHead>Participant</TableHead>
+              <TableHead className="text-center">Completed on</TableHead>
               <TableHead className="text-center">Skill Badges</TableHead>
               <TableHead className="text-center">Arcade Games</TableHead>
               <TableHead className="text-center">Completion Status</TableHead>
@@ -373,6 +426,18 @@ export function EnhancedLeaderboard({eventId, eventTitle="Hello"}) {
                       <span className="text-sm text-muted-foreground">{participant["User Email"]}</span>
                     </div>
                   </TableCell>
+
+                  
+                  <TableCell className="text-center font-medium">
+                      <div className="flex items-center justify-center gap-2">
+                        <span>
+                        {participant["Completion Date"] ? participant["Completion Date"] : "Not Completed Yet"}
+                        </span>
+                      </div>
+                    </TableCell>
+
+
+
                   <TableCell className="text-center font-medium">
                     <div className="flex items-center justify-center gap-2">
                       <span>{participant["No. of Skill Badges Completed"]}</span>
