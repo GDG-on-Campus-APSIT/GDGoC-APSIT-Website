@@ -181,6 +181,16 @@ export function EditEventDialog({ event, onClose }) {
               <Label htmlFor="send-mail">Send Mail</Label>
             </div>
           )}
+          <div>
+                <Label htmlFor="date">Upload Date</Label>
+                <Input
+                  id="uploadDate"
+                  type="date"
+                  value={editedEvent.uploadDate}
+                  onChange={(e) => setEditedEvent({ ...editedEvent, uploadDate: e.target.value })}
+                  required
+                />
+              </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel

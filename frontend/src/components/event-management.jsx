@@ -102,6 +102,8 @@ export function EventManagement() {
               "No. of Skill Badges Completed": row["# of Skill Badges Completed"] || row["No. of Skill Badges Completed"],
               "No. of Arcade Games Completed": row["# of Arcade Games Completed"] || row["No. of Arcade Games Completed"],
               "Total Completion": row["All Skill Badges & Games Completed"] || row["Total Completion"],
+             // "Date Completed" : row["Date Completed"]   //completion date trial 
+              "Completion Date": row["Completion Date"] //completion date trial
             };
   
             // Remove undefined or null values
