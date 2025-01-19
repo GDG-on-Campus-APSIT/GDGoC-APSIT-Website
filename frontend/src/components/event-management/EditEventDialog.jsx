@@ -264,17 +264,6 @@ export function EditEventDialog({ event, onClose }) {
             />
           </div>
           <div>
-            {/* <div>
-              <Label className="text-gray-400 flex gap-2">
-                <InfoCircledIcon />
-                Required CSV Fields
-              </Label>
-              <ul className="list-disc pl-5 text-sm text-gray-400 flex flex-wrap gap-x-5">
-                {requiredCSVFields.map((field) => (
-                  <li key={field}>{field}</li>
-                ))}
-              </ul>
-            </div> */}
             <Accordion type="single" collapsible className="mt-0">
               <AccordionItem value="required-fields">
                 <AccordionTrigger className="text-sm text-gray-400">
@@ -299,7 +288,7 @@ export function EditEventDialog({ event, onClose }) {
               <a
                 href="/template.csv"
                 download
-                className="text-blue-500 underline text-sm"
+                className="text-blue-300 underline text-sm"
               >
                 Get CSV template
               </a>
