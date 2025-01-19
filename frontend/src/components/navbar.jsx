@@ -194,6 +194,7 @@ export function NavbarComponent({ isAdmin = true }) {
                         <Link
                           href="/profile"
                           className="flex gap-1 items-center"
+                          onClick={() => setIsSidebarOpen(false)}
                         >
                           <Avatar className="h-8 w-8">
                             <AvatarImage
