@@ -3,6 +3,7 @@
 import React, { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { QRCodeCanvas } from 'qrcode.react';
+import { toast } from 'react-toastify';
 
 const Certificate = ({
   recipientName,
@@ -35,6 +36,7 @@ const Certificate = ({
         link.click();
       });      
     }
+    toast.info('Downloading certificate...', {position: "bottom-right",autoClose: 2000,hideProgressBar: false,transition : 'Bounce',});
   };
 
   return (

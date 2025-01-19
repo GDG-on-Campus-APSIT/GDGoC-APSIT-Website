@@ -5,6 +5,9 @@ import Certificate from '@/components/certificate';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { NavbarComponent } from '@/components/navbar';
+import { toast , Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
+
 
 export default function CertificatePage({ params }) {
   const { certificateId } = params; // Extract the certificateId from the URL
@@ -24,12 +27,17 @@ export default function CertificatePage({ params }) {
           // Get the first matching document
           const docData = querySnapshot.docs[0].data();
           setCertificateData(docData);
+          toast.success('Certificate loaded successfully',{position: "bottom-right",autoClose: 2000,hideProgressBar: false,
+            closeOnClick: false, pauseOnHover: true,draggable: true,progress: undefined,theme: "light",
+            transition: Bounce,});
         } else {
           setError('Certificate not found.');
         }
       } catch (err) {
         console.error('Error fetching certificate:', err);
         setError('Failed to load certificate.');
+        toast.error("Failed to load certificate:", err, {position: "bottom-right",autoClose: 5000,theme: "light",
+          transition: Bounce,})
       } finally {
         setLoading(false);
       }
