@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore" // Firestore imports
+import { toast , Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function RecognitionManagement() {
   const [eventName, setEventName] = useState("")
@@ -17,7 +19,7 @@ export function RecognitionManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!csvFile) {
-      alert("Please upload a valid CSV file.")
+      toast.error('Please select a CSV file to upload.');
       return
     }
 
@@ -58,7 +60,7 @@ export function RecognitionManagement() {
         }
       }
 
-      alert("Data successfully saved to Firestore!")
+      toast.success("Data successfully saved to Firestore!", {position: "bottom-right",autoClose: 3000,})
       setEventName("")
       setEventDate("")
       setCsvFile(null)
@@ -111,7 +113,7 @@ export function RecognitionManagement() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">Submit</Button>
+              <Button type="submit" className="w-full" >Submit</Button>
             </form>
           </CardContent>
         </Card>

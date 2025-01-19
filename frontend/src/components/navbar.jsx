@@ -16,10 +16,52 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { useAuthContext } from "@/context/AuthContext"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { toast , Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function NavbarComponent({ isAdmin = true }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const { user, signInWithGoogle, signOutUser } = useAuthContext()
+  
+  const signIn = ()=>toast.success('Sign In',{position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    transition: Bounce,})
+
+    const signOut = () =>
+      toast.success('Signed out successfully!', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+        transition: Bounce,
+      });
+  
+    const handleSignIn = async () => {
+      try {
+        await signInWithGoogle();
+        signIn();
+      } catch (error) {
+        toast.error('Failed to sign in. Please try again.');
+      }
+    };
+  
+    const handleSignOut = async () => {
+      try {
+        await signOutUser();
+        signOut();
+      } catch (error) {
+        toast.error('Failed to sign out. Please try again.');
+      }
+    };
 
   const navItems = [
     { name: 'Events', href: '/events' },
@@ -51,6 +93,7 @@ export function NavbarComponent({ isAdmin = true }) {
       ))}
     </>
   )
+
 
   return (
     (<nav className="bg-white shadow-md">
@@ -105,7 +148,7 @@ export function NavbarComponent({ isAdmin = true }) {
                   <DropdownMenuItem asChild>
                     <Link href="/profile">Profile</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={signOutUser}>
+                  <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sign out</span>
                   </DropdownMenuItem>
@@ -175,14 +218,18 @@ export function NavbarComponent({ isAdmin = true }) {
                           <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <span className="text-black">{user.displayName}</span>
-                        <Button variant="ghost" size="sm" onClick={signOutUser}>
+                        <Button variant="ghost" size="sm" onClick={() => {
+                                      handleSignOut(); // Your existing sign-out function         
+                                      }}>
+                                  
                           <LogOut className="h-4 w-4 mr-2" />
                           Sign out
                         </Button>
                       </div>
                     ) : (
                       <Button
-                        onClick={signInWithGoogle}
+                        onClick={//signInWithGoogle
+                          handleSignIn}
                         variant="outline"
                         className="w-full flex items-center justify-center px-4 py-2 border rounded-md transition-colors duration-200 ease-in-out hover:bg-gray-50">
                         <GoogleIcon className="mr-2 h-5 w-5" />
