@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { handleCreateEvent } from '@/lib/eventActions'
-
+import { toast , Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export function CreateEventForm() {
   const [newEvent, setNewEvent] = useState({
     title: "",
@@ -20,6 +21,15 @@ export function CreateEventForm() {
     category: "",
     description: "",
   })
+  const createEvent = ()=>toast.success('Event Created',{position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,})
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -128,7 +138,7 @@ export function CreateEventForm() {
               required
             />
           </div>
-          <Button type="submit">Create Event</Button>
+          <Button type="submit" onClick={createEvent}>Create Event</Button>
         </form>
       </CardContent>
     </Card>

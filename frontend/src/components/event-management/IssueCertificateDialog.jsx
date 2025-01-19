@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import Papa from "papaparse";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from '@/lib/firebase';
+import { toast , Bounce } from 'react-toastify';
 
 export function IssueCertificateDialog({ eventId, eventName, onClose }) {
   const [csvFile, setCsvFile] = useState(null);
@@ -15,6 +16,16 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
   const handleFileChange = (e) => {
     setCsvFile(e.target.files[0]);
   };
+
+    const issue = ()=>toast.success('Certiicate Issued',{position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,})
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,6 +62,7 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
           certificateId: uniqueId,
           issueDate, // Store issue date
         });
+        
 
         // Trigger mail function
         const mailResponse = await fetch('/api/send-certificate', {
@@ -78,6 +90,7 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
     } catch (error) {
       console.error("Error issuing certificates:", error);
       setError("Failed to process the file or send emails. Please try again.");
+      toast.error('Failed to process the file or send emails. Please try again.',{position: "bottom-right",});
     }
   };
 
@@ -97,7 +110,10 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={()=>{
+              onClose();
+              issue();
+            }}>
               Cancel
             </Button>
             <Button type="submit">Submit</Button>

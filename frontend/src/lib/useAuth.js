@@ -4,9 +4,12 @@ import { useState, useEffect } from "react";
 import { auth, googleProvider } from "./firebase";
 import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 import axios from 'axios';
+import { toast , Bounce } from 'react-toastify';
+
 
 export function useAuth() {
   const [user, setUser] = useState(null);
+  const [messsage, setMessage] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -31,9 +34,11 @@ export function useAuth() {
           email: firebaseUser.email,
           profilePic: firebaseUser.photoURL,
         });
+        
       }
     } catch (error) {
       console.error("Google sign-in error:", error);
+      toast.error("Google sign-in error:", error);
     }
   };
 

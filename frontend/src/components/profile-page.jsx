@@ -15,6 +15,8 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from "@/lib/firebase";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { toast , Bounce} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 
 // Mock user data
 const userData = {
@@ -57,6 +59,8 @@ export function ProfilePageComponent() {
         setCertificates(fetchedCertificates);
       } catch (error) {
         console.error('Error fetching certificates:', error);
+        toast.error("Failed to load certificates:", error, {position: "bottom-right",autoClose: 2000,hideProgressBar: false,
+          closeOnClick: false, pauseOnHover: true,draggable: true,progress: undefined,theme: "light",});
       } finally {
         setLoadingCertificates(false);
       }

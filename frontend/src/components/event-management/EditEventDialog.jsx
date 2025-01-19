@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { handleEditEvent } from '@/lib/eventActions'
+import { toast , Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 
 export function EditEventDialog({ event, onClose }) {
   const [editedEvent, setEditedEvent] = useState(event)
@@ -29,7 +31,17 @@ export function EditEventDialog({ event, onClose }) {
     }
   }, [dateTBA])
 
-  const handleSubmit = async (e) => {
+   const notify = ()=>toast.success('CSV added successfully',{position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    transition: Bounce,})
+
+    const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       const finalCategory = editedEvent.category === 'custom' ? customCategory : editedEvent.category
@@ -37,6 +49,7 @@ export function EditEventDialog({ event, onClose }) {
       onClose()
     } catch (error) {
       console.error("Failed to edit event:", error)
+      toast.error("Failed to edit event:", error)
       // Here you might want to show an error message to the user
     }
   }
@@ -195,7 +208,8 @@ export function EditEventDialog({ event, onClose }) {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" onClick={notify}>Save Changes</Button>
+                                       
           </DialogFooter>
         </form>
       </DialogContent>
