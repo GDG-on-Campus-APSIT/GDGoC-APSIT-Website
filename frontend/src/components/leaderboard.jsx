@@ -144,8 +144,8 @@ return historicalData;
     { name: 'Arcade Games', value: latestStats.totalGames, fill: "var(--color-arcade-games)" },
   ]
 
-  // Data for line charts
-  const completionRateData = historicalData.map(entry => ({
+   // Data for line charts
+   const completionRateData = historicalData.map(entry => ({
     date: new Date(entry.date).toLocaleDateString(),
     rate: parseFloat(entry.stats.completionRate)
   }))

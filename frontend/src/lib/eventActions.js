@@ -148,7 +148,7 @@ if (leaderboardFile) {
       : 0;
 
     const dailyStats = {
-      date: today,
+      date: eventData.uploadDate,
       participants: validLeaderboardData,
       stats: {
         totalParticipants,
