@@ -5,6 +5,7 @@ import Certificate from '@/components/certificate';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { NavbarComponent } from '@/components/navbar';
+import { ExampleComponentDemo } from '@/components/demo';
 
 export default function VerifyPage({ params }) {
   const { certificateId } = params; // Extract certificateId from the URL
@@ -58,6 +59,7 @@ export default function VerifyPage({ params }) {
   return (
     <>
     <NavbarComponent />
+    <ExampleComponentDemo />
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <h1 className="text-3xl font-bold mb-8">Certificate Verification: Below Certificate is a valid certificate issued by GDGoC APSIT</h1>
       <Certificate
