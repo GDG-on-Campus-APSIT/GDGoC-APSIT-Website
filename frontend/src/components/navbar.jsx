@@ -78,6 +78,7 @@ export function NavbarComponent({ isAdmin = true }) {
     { name: 'Member Management', href: '/admin/members' },
     { name: 'Content Management', href: '/admin/content' },
     { name: 'Recognition Program', href: '/admin/recognition' },
+    { name: 'Certificate Management', href: '/admin/certificate' },
     { name: 'Settings', href: '/admin/settings' },
   ]
 
