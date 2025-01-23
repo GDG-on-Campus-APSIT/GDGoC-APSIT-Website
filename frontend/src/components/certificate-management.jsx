@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase'; // Adjust the path based on your setup
 import { collection, getDocs, doc, deleteDoc} from 'firebase/firestore';
 import { toast } from 'react-toastify';
 
-export function Cert(){
+export function CertificateManagement(){
     const [certificates, setCertificates] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
