@@ -150,7 +150,7 @@ export function HomepageComponent() {
           <h2 className="text-3xl font-bold mb-4">Ready to Join Us?</h2>
           <p className="text-xl mb-8">Become a part of our thriving tech community at APSIT</p>
           <Button asChild size="lg">
-            <Link href="/join">Sign Up Now</Link>
+            <Link href="https://gdg.community.dev/gdg-on-campus-ap-shah-institute-of-technology-thane-india/">Join Us Now</Link>
           </Button>
         </div>
       </section>

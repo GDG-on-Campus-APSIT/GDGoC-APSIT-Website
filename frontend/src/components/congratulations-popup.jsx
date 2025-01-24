@@ -6,8 +6,8 @@ import {
   CardContent,
   CardDescription,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/wrap-card";
-import { CardFooter } from "./ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
