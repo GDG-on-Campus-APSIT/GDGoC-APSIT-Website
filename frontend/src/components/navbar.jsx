@@ -84,6 +84,7 @@ export function NavbarComponent({ isAdmin = true }) {
     { name: "Settings", href: "/admin/settings" },
   ];
 
+
   const NavLinks = ({ items }) => (
     <>
       {items.map((item) => (
