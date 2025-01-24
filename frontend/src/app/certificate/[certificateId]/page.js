@@ -7,6 +7,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { NavbarComponent } from '@/components/navbar';
 import { toast , Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
+import { CongratulationsPopUp } from '@/components/congratulations-popup';
 
 
 export default function CertificatePage({ params }) {
@@ -65,6 +66,7 @@ export default function CertificatePage({ params }) {
 
   return (
     <>
+    <CongratulationsPopUp />
     <NavbarComponent />
     <Certificate
       recipientName={recipientName}

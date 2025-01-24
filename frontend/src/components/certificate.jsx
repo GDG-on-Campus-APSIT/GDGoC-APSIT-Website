@@ -49,7 +49,6 @@ const Certificate = ({
 
   return (
     <>
-      <CongratulationsPopUp />
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-2 sm:p-4">
         {/* Download Button */}
         <button
@@ -64,11 +63,17 @@ const Certificate = ({
           className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-4xl bg-white rounded-xl shadow-lg relative overflow-hidden"
           style={{ backgroundColor: "white" }}
         >
-          {/* Colored Corners */}
-          <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 bg-red-400 -translate-x-8 -translate-y-8 rotate-45" />
+          {/* Colored Corners 
+          <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-24 lg:h-24 xl:w-24 xl:h-24 bg-red-400 -translate-x-8 -translate-y-8 rotate-45" />
           <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 bg-green-400 translate-x-8 -translate-y-8 rotate-45" />
           <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 bg-blue-400 -translate-x-8 translate-y-8 rotate-45" />
           <div className="absolute bottom-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 bg-yellow-400 translate-x-8 translate-y-8 rotate-45" />
+*/}
+          {/* Colored Corners */}
+          <div className="absolute top-0 left-0 w-[25vmin] h-[25vmin] bg-red-400 -translate-x-[50%] -translate-y-[50%] rotate-45" />
+          <div className="absolute top-0 right-0 w-[25vmin] h-[25vmin] bg-green-400 translate-x-[50%] -translate-y-[50%] rotate-45" />
+          <div className="absolute bottom-0 left-0 w-[25vmin] h-[25vmin] bg-blue-400 -translate-x-[50%] translate-y-[50%] rotate-45" />
+          <div className="absolute bottom-0 right-0 w-[25vmin] h-[25vmin] bg-yellow-400 translate-x-[50%] translate-y-[50%] rotate-45" />
 
           {/* Certificate Content */}
           <div className="relative m-2 sm:m-4 md:m-6 lg:m-8 p-2 sm:p-4 md:p-6 lg:p-8 border-2 rounded-xl border-gray-200">
@@ -91,7 +96,7 @@ const Certificate = ({
             </h2>
 
             {/* Recipient Name */}
-            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-center font-script text-amber-500 mb-3 sm:mb-4 md:mb-6">
+            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-center font-script text-amber-500 mb-3 sm:mb-4 md:mb-6 underline decoration-amber-500 decoration-2 underline-offset-4">
               {recipientName}
             </h3>
 
