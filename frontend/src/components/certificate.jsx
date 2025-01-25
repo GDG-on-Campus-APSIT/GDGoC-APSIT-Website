@@ -3,10 +3,9 @@
 import React, { useRef } from "react"
 import html2canvas from "html2canvas"
 import { QRCodeCanvas } from "qrcode.react"
-import { toast } from "react-toastify"
-import { CongratulationsPopUp } from "./congratulations-popup"
-
-
+import { toast, Bounce } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+ 
 const Certificate = ({
   recipientName,
   courseName,
@@ -41,9 +40,7 @@ const Certificate = ({
     }
     toast.info("Downloading certificate...", {
       position: "bottom-center", // Changed to bottom-center for better visibility on mobile
-      autoClose: 2000,
-      hideProgressBar: false,
-      transition: "Bounce",
+      autoClose: 2000, hideProgressBar: false, closeOnClick: false, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", transition: Bounce,
     })
   }
 
@@ -53,7 +50,7 @@ const Certificate = ({
         {/* Download Button */}
         <button
           onClick={downloadCertificate}
-          className="mb-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
+          className="mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-GoogleSansDisplay-Bold"
         >
           Download Certificate
         </button>
@@ -87,21 +84,21 @@ const Certificate = ({
             </div>
 
             {/* Title */}
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-center tracking-wider mb-3 sm:mb-4 md:mb-6">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl  text-center tracking-wider mb-3 sm:mb-4 md:mb-6 font-GoogleSansDisplay-Regular">
               CERTIFICATE OF COMPLETION
             </h1>
 
-            <h2 className="text-sm sm:text-base md:text-lg lg:text-xl text-center text-gray-600 mb-2 sm:mb-3 md:mb-4">
+            <h2 className="text-sm sm:text-base md:text-lg lg:text-xl text-center text-gray-600 mb-2 sm:mb-3 md:mb-4 font-GoogleSansDisplay-Regular">
               THIS CERTIFICATE IS PROUDLY PRESENTED TO
             </h2>
 
             {/* Recipient Name */}
-            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-center font-script text-amber-500 mb-3 sm:mb-4 md:mb-6 underline decoration-amber-500 decoration-2 underline-offset-4">
+            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-center text-amber-500 mb-3 sm:mb-4 md:mb-6 font-GoogleSansDisplay-Regular">
               {recipientName}
             </h3>
 
             {/* Description */}
-            <p className="text-center text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 mb-4 sm:mb-6 md:mb-8 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl mx-auto">
+            <p className="text-center text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 mb-4 sm:mb-6 md:mb-8 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl mx-auto font-GoogleSansDisplay-Regular">
               {description}
             </p>
 
@@ -115,7 +112,7 @@ const Certificate = ({
                   className="h-6 sm:h-8 md:h-10 lg:h-12 mx-auto mb-1 sm:mb-2"
                 />
                 <div className="w-24 sm:w-32 md:w-40 lg:w-48 h-px bg-gray-300 mx-auto mb-1 sm:mb-2" />
-                <p className="font-bold text-xs sm:text-sm md:text-base">{mentorName}</p>
+                <p className="font-GoogleSansDisplay-Bold text-xs sm:text-sm md:text-base">{mentorName}</p>
                 <p className="text-xs md:text-sm text-gray-600">{mentorTitle}</p>
               </div>
 
@@ -127,7 +124,7 @@ const Certificate = ({
                   className="h-6 sm:h-8 md:h-10 lg:h-12 mx-auto mb-1 sm:mb-2"
                 />
                 <div className="w-24 sm:w-32 md:w-40 lg:w-48 h-px bg-gray-300 mx-auto mb-1 sm:mb-2" />
-                <p className="font-bold text-xs sm:text-sm md:text-base">{organizerName}</p>
+                <p className="font-GoogleSansDisplay-Bold text-xs sm:text-sm md:text-base">{organizerName}</p>
                 <p className="text-xs md:text-sm text-gray-600">{organizerTitle}</p>
               </div>
 
@@ -139,7 +136,7 @@ const Certificate = ({
                   className="h-6 sm:h-8 md:h-10 lg:h-12 mx-auto mb-1 sm:mb-2"
                 />
                 <div className="w-24 sm:w-32 md:w-40 lg:w-48 h-px bg-gray-300 mx-auto mb-1 sm:mb-2" />
-                <p className="font-bold text-xs sm:text-sm md:text-base">{facultyName}</p>
+                <p className="font-GoogleSansDisplay-Bold text-xs sm:text-sm md:text-base ">{facultyName}</p>
                 <p className="text-xs md:text-sm text-gray-600">{facultyTitle}</p>
               </div>
             </div>

@@ -79,4 +79,18 @@
   * {
     @apply border-border;
   }
+
+  @font-face {
+    font-family: 'GoogleSansDisplay-Bold';
+    src: url('/frontend/public/fonts/GoogleSansDisplay-Bold.ttf') format('truetype');
+    font-weight: 700;
+  }
+  
+  @font-face {
+    font-family: 'GoogleSansDisplay-Regular';
+    src: url('/frontend/public/fonts/GoogleSansDisplay-Regular.ttf') format('truetype');
+  }
+
+
+
 }
