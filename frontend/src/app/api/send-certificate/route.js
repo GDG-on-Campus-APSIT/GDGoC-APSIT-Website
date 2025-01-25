@@ -57,9 +57,9 @@ export async function POST(req) {
           <div style="background-color: #f4f4f9; padding: 20px; text-align: center; color: #666;">
             <p style="margin: 0; font-size: 14px;">Best regards,<br><strong>The GDGoC APSIT Team</strong></p>
             <div style="margin-top: 20px; font-size: 12px;">
-              <a href="#" style="color: #4285f4; text-decoration: none; margin: 0 10px;">Website</a>
-              <a href="#" style="color: #4285f4; text-decoration: none; margin: 0 10px;">Twitter</a>
-              <a href="#" style="color: #4285f4; text-decoration: none; margin: 0 10px;">LinkedIn</a>
+              <a href="https://gdgoc-apsit.vercel.app/" style="color: #4285f4; text-decoration: none; margin: 0 10px;">Website</a>
+              <a href="https://www.youtube.com/@GDGonCampusAPSIT" style="color: #4285f4; text-decoration: none; margin: 0 10px;">Youtube</a>
+              <a href="https://www.linkedin.com/company/gdg-apsit" style="color: #4285f4; text-decoration: none; margin: 0 10px;">LinkedIn</a>
             </div>
           </div>
         </div>

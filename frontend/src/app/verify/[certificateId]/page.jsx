@@ -63,17 +63,20 @@ export default function VerifyPage({ params }) {
   }
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-red-50 to-white p-8">
-        <Shield className="w-16 h-16 text-red-500 mb-4" />
-        <h2 className="text-2xl font-bold text-red-600 mb-2">Verification Failed</h2>
-        <p className="text-gray-600 text-center max-w-md">{error}</p>
-      </div>
+      <>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-red-50 to-white p-8">
+          <Shield className="w-16 h-16 text-red-500 mb-4" />
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Verification Failed</h2>
+          <p className="text-gray-600 text-center max-w-md">{error}</p>
+        </div>
+      </>
     );
   }
   const {
     name: recipientName,
     eventId,
     email,
+    issueDate,
   } = certificateData;
   const verificationUrl = `https://gdgoc-apsit.vercel.app/verify/${certificateId}`;
   const description = `In recognition of his/her hardwork and dedication shown in obtaining all the 15 skill badges and finishing 1 arcade of Google Gen AI Study Jam 2024, held by GDG On Campus APSIT`;
@@ -140,7 +143,7 @@ export default function VerifyPage({ params }) {
             <Certificate
               recipientName={recipientName}
               courseName={`Event: ${eventId}`}
-              date={new Date().toLocaleDateString()}
+              date={new Date(issueDate).toLocaleDateString()}
               organizerName="Yash Agrawal"
               organizerTitle="Organizer"
               facultyName="Prof. Rushikesh Nikam"

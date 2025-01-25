@@ -8,6 +8,7 @@ import { NavbarComponent } from '@/components/navbar';
 import { toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CongratulationsPopUp } from '@/components/congratulations-popup';
+import { Shield, Loader2 } from 'lucide-react';
 
 export default function CertificatePage({ params }) {
   const { certificateId } = params; // Extract the certificateId from the URL
@@ -68,7 +69,7 @@ export default function CertificatePage({ params }) {
             transition: Bounce,
           });
         } else {
-          setError('Certificate not found.');
+          setError('Unable to find a certificate. Please check the ID.');
         }
       } catch (err) {
         console.error('Error fetching certificate:', err);
@@ -88,17 +89,32 @@ export default function CertificatePage({ params }) {
   }, [certificateId]);
 
   if (loading) {
-    return <p className="text-center mt-8">Loading certificate...</p>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white">
+        <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
+        <h2 className="text-xl font-semibold text-gray-700">Loading Certificate...</h2>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-center text-red-500 mt-8">{error}</p>;
+    return (
+      <>
+        <NavbarComponent />
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-red-50 to-white p-8">
+          <Shield className="w-16 h-16 text-red-500 mb-4" />
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Generation Failed</h2>
+          <p className="text-gray-600 text-center max-w-md">{error}</p>
+        </div>
+      </>
+    );
   }
 
   const {
     name: recipientName,
     eventId,
     email,
+    issueDate, // Add issueDate here
   } = certificateData;
 
   const verificationUrl = `https://gdgoc-apsit.vercel.app//verify/${certificateId}`;
@@ -118,7 +134,7 @@ export default function CertificatePage({ params }) {
         <Certificate
           recipientName={recipientName}
           courseName={`Event: ${eventId}`}
-          date={new Date().toLocaleDateString()}
+          date={new Date(issueDate).toLocaleDateString()} // Pass the issueDate here
           organizerName="Yash Agrawal"
           organizerTitle="Organizer"
           facultyName="Prof. Rushikesh Nikam"
