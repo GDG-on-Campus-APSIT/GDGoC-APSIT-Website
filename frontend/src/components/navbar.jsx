@@ -188,7 +188,7 @@ export function NavbarComponent({ isAdmin = true }) {
                   <span className="sr-only">Open sidebar menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4">
                     <Link
