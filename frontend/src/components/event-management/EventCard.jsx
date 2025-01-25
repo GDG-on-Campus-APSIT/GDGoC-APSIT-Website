@@ -1,18 +1,36 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Calendar, Clock, MapPin, Edit, Trash2, ShieldCheck  } from 'lucide-react'
-import { EditEventDialog } from './EditEventDialog'
-import { EventSummaryDialog } from './EventSummaryDialog'
-import { IssueCertificateDialog } from './IssueCertificateDialog'
-import { handleEditEvent, handleDeleteEvent, handleEndEvent } from '@/lib/eventActions'
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Edit,
+  Trash2,
+  ShieldCheck,
+} from "lucide-react";
+import { EditEventDialog } from "./EditEventDialog";
+import { EventSummaryDialog } from "./EventSummaryDialog";
+import { IssueCertificateDialog } from "./IssueCertificateDialog";
+import {
+  handleEditEvent,
+  handleDeleteEvent,
+  handleEndEvent,
+} from "@/lib/eventActions";
 
 export function EventCard({ event, isPast = false }) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [isViewingSummary, setIsViewingSummary] = useState(false)
-  const [isIssuingCertificate, setIsIssuingCertificate] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
+  const [isViewingSummary, setIsViewingSummary] = useState(false);
+  const [isIssuingCertificate, setIsIssuingCertificate] = useState(false);
 
   return (
     <>
@@ -25,7 +43,9 @@ export function EventCard({ event, isPast = false }) {
               {event.startDate === event.endDate ? (
                 <span>{event.startDate}</span>
               ) : (
-                <span>{event.startDate} - {event.endDate}</span>
+                <span>
+                  {event.startDate} - {event.endDate}
+                </span>
               )}
             </div>
             <div className="flex items-center gap-2">
@@ -47,20 +67,29 @@ export function EventCard({ event, isPast = false }) {
               <Button variant="outline" onClick={() => setIsEditing(true)}>
                 <Edit className="mr-2 h-4 w-4" /> Edit
               </Button>
-              <Button variant="destructive" onClick={() => handleDeleteEvent(event.id)}>
+              <Button
+                variant="destructive"
+                onClick={() => handleDeleteEvent(event.id)}
+              >
                 <Trash2 className="mr-2 h-4 w-4" /> Delete
               </Button>
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={() => setIsViewingSummary(true)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsViewingSummary(true)}
+              >
                 View Summary
               </Button>
               <Button variant="outline" onClick={() => setIsEditing(true)}>
                 <Edit className="mr-2 h-4 w-4" /> Edit
               </Button>
-              <Button variant="outline" onClick={() => setIsIssuingCertificate(true)}>
-                <ShieldCheck  className="mr-2 h-4 w-4" /> Issue Certificate
+              <Button
+                variant="outline"
+                onClick={() => setIsIssuingCertificate(true)}
+              >
+                <ShieldCheck className="mr-2 h-4 w-4" /> Issue Certificate
               </Button>
             </>
           )}
@@ -88,5 +117,5 @@ export function EventCard({ event, isPast = false }) {
         />
       )}
     </>
-  )
+  );
 }
