@@ -60,7 +60,7 @@ const Certificate = ({
 
         <div
           ref={certificateRef}
-          className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-4xl bg-white rounded-xl shadow-lg relative overflow-hidden"
+          className="w-full bg-white rounded-xl shadow-lg relative overflow-hidden p-4 sm:p-8"
           style={{ backgroundColor: "white" }}
         >
           {/* Colored Corners 
@@ -70,10 +70,10 @@ const Certificate = ({
           <div className="absolute bottom-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 bg-yellow-400 translate-x-8 translate-y-8 rotate-45" />
 */}
           {/* Colored Corners */}
-          <div className="absolute top-0 left-0 w-[25vmin] h-[25vmin] bg-red-400 -translate-x-[50%] -translate-y-[50%] rotate-45" />
-          <div className="absolute top-0 right-0 w-[25vmin] h-[25vmin] bg-green-400 translate-x-[50%] -translate-y-[50%] rotate-45" />
-          <div className="absolute bottom-0 left-0 w-[25vmin] h-[25vmin] bg-blue-400 -translate-x-[50%] translate-y-[50%] rotate-45" />
-          <div className="absolute bottom-0 right-0 w-[25vmin] h-[25vmin] bg-yellow-400 translate-x-[50%] translate-y-[50%] rotate-45" />
+          <div className="absolute top-0 left-0 w-[55vmin] h-[55vmin] lg:w-[35vmin] lg:h-[35vmin] bg-red-500 -translate-x-[50%] -translate-y-[50%] rotate-45" />
+          <div className="absolute top-0 right-0 w-[55vmin] h-[55vmin] lg:w-[35vmin] lg:h-[35vmin] bg-green-500 translate-x-[50%] -translate-y-[50%] rotate-45" />
+          <div className="absolute bottom-0 left-0 w-[55vmin] h-[55vmin] lg:w-[35vmin] lg:h-[35vmin] bg-blue-500 -translate-x-[50%] translate-y-[50%] rotate-45" />
+          <div className="absolute bottom-0 right-0 w-[55vmin] h-[55vmin] lg:w-[35vmin] lg:h-[35vmin] bg-yellow-500 translate-x-[50%] translate-y-[50%] rotate-45" />
 
           {/* Certificate Content */}
           <div className="relative m-2 sm:m-4 md:m-6 lg:m-8 p-2 sm:p-4 md:p-6 lg:p-8 border-2 rounded-xl border-gray-200">
