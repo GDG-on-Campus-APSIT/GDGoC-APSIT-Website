@@ -142,15 +142,15 @@ export default function VerifyPage({ params }) {
               courseName={`Event: ${eventId}`}
               date={new Date().toLocaleDateString()}
               organizerName="Yash Agrawal"
-              organizerTitle="Organizer of GDGoC APSIT"
+              organizerTitle="Organizer"
               facultyName="Prof. Rushikesh Nikam"
-              facultyTitle="Faculty Head of GDGoC APSIT"
+              facultyTitle="Faculty Head"
               mentorName="Jishanahmed Shaikh"
-              mentorTitle="Cloud Head of GDGoC APSIT"
+              mentorTitle="Cloud Head"
               groupLogo="/GDG_logo_horizontal.png"
-              organizerSignature="/yash_sign.png"
-              facultySignature="/sir_sign.png"
-              mentorSignature="/jishan_sign.png"
+              organizerSignature="/signs/yash_sign.jpg"
+              facultySignature="/signs/rushikesh_sir_sign.jpg"
+              mentorSignature="/signs/jishan_sign.png"
               verificationUrl={verificationUrl}
               description={description}
             />
