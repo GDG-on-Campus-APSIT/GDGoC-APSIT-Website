@@ -5,7 +5,7 @@ import html2canvas from "html2canvas"
 import { QRCodeCanvas } from "qrcode.react"
 import { toast, Bounce } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
- 
+
 const Certificate = ({
   recipientName,
   courseName,
@@ -33,14 +33,22 @@ const Certificate = ({
         scale: 2, // Increase scale for better quality on mobile
       }).then((canvas) => {
         const link = document.createElement("a")
-        link.download = "certificate.png"
+        const fileName = `GDGoC-APSIT-GenAI-StudyJam-${recipientName}-certificate.png`
+        link.download = fileName
         link.href = canvas.toDataURL("image/png")
         link.click()
       })
     }
     toast.info("Downloading certificate...", {
-      position: "bottom-center", // Changed to bottom-center for better visibility on mobile
-      autoClose: 2000, hideProgressBar: false, closeOnClick: false, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", transition: Bounce,
+      position: "bottom-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
     })
   }
 
@@ -50,9 +58,9 @@ const Certificate = ({
         {/* Download Button */}
         <button
           onClick={downloadCertificate}
-          className="mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-GoogleSansDisplay-Bold"
+          className="mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-GoogleSansDisplay-Bold flex items-center justify-center"
         >
-          Download Certificate
+            Download Certificate
         </button>
 
         <div
@@ -60,12 +68,6 @@ const Certificate = ({
           className="w-full bg-white rounded-xl shadow-lg relative overflow-hidden p-4 sm:p-8"
           style={{ backgroundColor: "white" }}
         >
-          {/* Colored Corners 
-          <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-24 lg:h-24 xl:w-24 xl:h-24 bg-red-400 -translate-x-8 -translate-y-8 rotate-45" />
-          <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 bg-green-400 translate-x-8 -translate-y-8 rotate-45" />
-          <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 bg-blue-400 -translate-x-8 translate-y-8 rotate-45" />
-          <div className="absolute bottom-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 bg-yellow-400 translate-x-8 translate-y-8 rotate-45" />
-*/}
           {/* Colored Corners */}
           <div className="absolute top-0 left-0 w-[55vmin] h-[55vmin] lg:w-[35vmin] lg:h-[35vmin] bg-red-500 -translate-x-[50%] -translate-y-[50%] rotate-45" />
           <div className="absolute top-0 right-0 w-[55vmin] h-[55vmin] lg:w-[35vmin] lg:h-[35vmin] bg-green-500 translate-x-[50%] -translate-y-[50%] rotate-45" />
@@ -109,9 +111,9 @@ const Certificate = ({
                 <img
                   src={mentorSignature || "/placeholder.svg"}
                   alt="Mentor Signature"
-                  className="h-6 sm:h-8 md:h-10 lg:h-12 mx-auto mb-1 sm:mb-2"
+                  className="h-8 sm:h-12 md:h-14 lg:h-16 mx-auto mb-1 sm:mb-2"
                 />
-                <div className="w-24 sm:w-32 md:w-40 lg:w-48 h-px bg-gray-300 mx-auto mb-1 sm:mb-2" />
+                <div className="w-28 sm:w-36 md:w-44 lg:w-52 h-px bg-gray-300 mx-auto mb-1 sm:mb-2" />
                 <p className="font-GoogleSansDisplay-Bold text-xs sm:text-sm md:text-base">{mentorName}</p>
                 <p className="text-xs md:text-sm text-gray-600">{mentorTitle}</p>
               </div>
@@ -121,9 +123,9 @@ const Certificate = ({
                 <img
                   src={organizerSignature || "/placeholder.svg"}
                   alt="Organizer Signature"
-                  className="h-6 sm:h-8 md:h-10 lg:h-12 mx-auto mb-1 sm:mb-2"
+                  className="h-8 sm:h-12 md:h-14 lg:h-16 mx-auto mb-1 sm:mb-2"
                 />
-                <div className="w-24 sm:w-32 md:w-40 lg:w-48 h-px bg-gray-300 mx-auto mb-1 sm:mb-2" />
+                <div className="w-28 sm:w-36 md:w-44 lg:w-52 h-px bg-gray-300 mx-auto mb-1 sm:mb-2" />
                 <p className="font-GoogleSansDisplay-Bold text-xs sm:text-sm md:text-base">{organizerName}</p>
                 <p className="text-xs md:text-sm text-gray-600">{organizerTitle}</p>
               </div>
@@ -133,9 +135,9 @@ const Certificate = ({
                 <img
                   src={facultySignature || "/placeholder.svg"}
                   alt="Faculty Signature"
-                  className="h-6 sm:h-8 md:h-10 lg:h-12 mx-auto mb-1 sm:mb-2"
+                  className="h-8 sm:h-12 md:h-14 lg:h-16 mx-auto mb-1 sm:mb-2"
                 />
-                <div className="w-24 sm:w-32 md:w-40 lg:w-48 h-px bg-gray-300 mx-auto mb-1 sm:mb-2" />
+                <div className="w-28 sm:w-36 md:w-44 lg:w-52 h-px bg-gray-300 mx-auto mb-1 sm:mb-2" />
                 <p className="font-GoogleSansDisplay-Bold text-xs sm:text-sm md:text-base ">{facultyName}</p>
                 <p className="text-xs md:text-sm text-gray-600">{facultyTitle}</p>
               </div>

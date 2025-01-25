@@ -45,9 +45,9 @@ export function EditEventDialog({ event, onClose }) {
     "Google Cloud Skills Boost Profile URL",
     "Profile URL Status",
     "Access Code Redemption Status",
-    "No. of Skill Badges Completed",
-    "No. of Arcade Games Completed",
-    "Total Completion",
+    "# of Skill Badges Completed",
+    "# of Arcade Games Completed",
+    "All Skill Badges & Games Completed",
   ];
 
   useEffect(() => {
