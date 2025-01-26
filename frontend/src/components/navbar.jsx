@@ -78,9 +78,10 @@ export function NavbarComponent({ isAdmin = true }) {
 
   const adminRoutes = [
     { name: "Event Management", href: "/admin/events" },
+    { name: "Certificates Management", href: "/admin/certificate"},
+    { name: "Recognition Program", href: "/admin/recognition" },
     { name: "Member Management", href: "/admin/members" },
     { name: "Content Management", href: "/admin/content" },
-    { name: "Recognition Program", href: "/admin/recognition" },
     { name: "Settings", href: "/admin/settings" },
   ];
 
