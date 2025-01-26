@@ -82,15 +82,31 @@
 
   @font-face {
     font-family: 'GoogleSansDisplay-Bold';
-    src: url('/frontend/public/fonts/GoogleSansDisplay-Bold.ttf') format('truetype');
+    src: url('/fonts/GoogleSansDisplay-Bold.ttf') format('truetype');
     font-weight: 700;
   }
   
   @font-face {
     font-family: 'GoogleSansDisplay-Regular';
-    src: url('/frontend/public/fonts/GoogleSansDisplay-Regular.ttf') format('truetype');
+    src: url('/fonts/GoogleSansDisplay-Regular.ttf') format('truetype');
   }
+}
 
+@keyframes rotate-device {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-90deg);
+  }
+  75% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
 
-
+.animate-rotate-device {
+  animation: rotate-device 3s ease-in-out infinite;
 }

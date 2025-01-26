@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import React, { useRef } from "react"
-import html2canvas from "html2canvas"
-import { QRCodeCanvas } from "qrcode.react"
-import { toast, Bounce } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import React, { useRef } from "react";
+import html2canvas from "html2canvas";
+import { QRCodeCanvas } from "qrcode.react";
+import { toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Certificate = ({
   recipientName,
@@ -23,7 +23,7 @@ const Certificate = ({
   verificationUrl,
   description,
 }) => {
-  const certificateRef = useRef(null)
+  const certificateRef = useRef(null);
 
   const downloadCertificate = () => {
     if (certificateRef.current) {
@@ -32,12 +32,12 @@ const Certificate = ({
         useCORS: true,
         scale: 2, // Increase scale for better quality on mobile
       }).then((canvas) => {
-        const link = document.createElement("a")
-        const fileName = `GDGoC-APSIT-GenAI-StudyJam-${recipientName}-certificate.png`
-        link.download = fileName
-        link.href = canvas.toDataURL("image/png")
-        link.click()
-      })
+        const link = document.createElement("a");
+        const fileName = `GDGoC-APSIT-GenAI-StudyJam-${recipientName}-certificate.png`;
+        link.download = fileName;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
     }
     toast.info("Downloading certificate...", {
       position: "bottom-center",
@@ -49,8 +49,8 @@ const Certificate = ({
       progress: undefined,
       theme: "light",
       transition: Bounce,
-    })
-  }
+    });
+  };
 
   return (
     <>
@@ -58,9 +58,9 @@ const Certificate = ({
         {/* Download Button */}
         <button
           onClick={downloadCertificate}
-          className="mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-GoogleSansDisplay-Bold flex items-center justify-center"
+          className="mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-googleSansBold flex items-center justify-center"
         >
-            Download Certificate
+          Download Certificate
         </button>
 
         <div
@@ -86,21 +86,21 @@ const Certificate = ({
             </div>
 
             {/* Title */}
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl  text-center tracking-wider mb-3 sm:mb-4 md:mb-6 font-GoogleSansDisplay-Regular">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-center tracking-wider mb-3 sm:mb-4 md:mb-6 font-googleSansBold">
               CERTIFICATE OF COMPLETION
             </h1>
 
-            <h2 className="text-sm sm:text-base md:text-lg lg:text-xl text-center text-gray-600 mb-2 sm:mb-3 md:mb-4 font-GoogleSansDisplay-Regular">
+            <h2 className="text-sm sm:text-base md:text-lg lg:text-xl text-center text-gray-600 mb-2 sm:mb-3 md:mb-4 font-googleSansRegular">
               THIS CERTIFICATE IS PROUDLY PRESENTED TO
             </h2>
 
             {/* Recipient Name */}
-            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-center text-amber-500 mb-3 sm:mb-4 md:mb-6 font-GoogleSansDisplay-Regular">
+            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-center text-amber-500 mb-3 sm:mb-4 md:mb-6 font-googleSansBold">
               {recipientName}
             </h3>
 
             {/* Description */}
-            <p className="text-center text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 mb-4 sm:mb-6 md:mb-8 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl mx-auto font-GoogleSansDisplay-Regular">
+            <p className="text-center text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 mb-4 sm:mb-6 md:mb-8 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl mx-auto font-googleSansRegular">
               {description}
             </p>
 
@@ -145,7 +145,7 @@ const Certificate = ({
 
             {/* QR Code and Date */}
             <div className="text-center">
-              <QRCodeCanvas value={verificationUrl} size={64} className="mx-auto mb-1 sm:mb-2" />
+              <QRCodeCanvas value={verificationUrl} size={100} className="mx-auto mb-1 sm:mb-2" />
               <p className="text-xs md:text-sm text-gray-500">SCAN TO VERIFY</p>
               <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-2">ISSUE DATE: {date}</p>
             </div>
@@ -153,8 +153,7 @@ const Certificate = ({
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Certificate
-
+export default Certificate;
