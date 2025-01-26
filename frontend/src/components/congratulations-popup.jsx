@@ -30,7 +30,7 @@ export function CongratulationsPopUp() {
               <CardContent className="flex flex-col gap-6 p-8">
                 <CardTitle className="text-4xl font-bold text-center">Congratulations on Your Certificate!</CardTitle>
                 <CardDescription className="text-xl text-center">
-                  Your hard work and dedication have paid off. We're thrilled to see you take this next step in your
+                  Your hard work and dedication have paid off. We&apos;re thrilled to see you take this next step in your
                   career. Keep up the fantastic work!
                 </CardDescription>
               </CardContent>

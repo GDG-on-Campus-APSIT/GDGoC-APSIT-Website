@@ -1,52 +1,55 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import Link from "next/link"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar, Users, BookOpen, Award } from 'lucide-react'
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from '@/lib/firebase';
+import { Calendar, Users, BookOpen, Award, ArrowRight } from "lucide-react"
+import { collection, query, where, getDocs } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+import { motion } from "framer-motion"
 
 export function HomepageComponent() {
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [upcomingEvents, setUpcomingEvents] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchEvents = async () => {
-      setLoading(true);
+      setLoading(true)
 
       try {
-        const currentDate = new Date().toISOString(); // Get the current date
-        const eventsRef = collection(db, "events"); // Firestore collection
-        const eventsQuery = query(eventsRef, where("startDate", ">=", currentDate)); // Query for upcoming events
-        const querySnapshot = await getDocs(eventsQuery);
+        const currentDate = new Date().toISOString() // Get the current date
+        const eventsRef = collection(db, "events") // Firestore collection
+        const eventsQuery = query(eventsRef, where("startDate", ">=", currentDate)) // Query for upcoming events
+        const querySnapshot = await getDocs(eventsQuery)
 
-        const events = querySnapshot.docs.map(doc => ({
+        const events = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }));
+        }))
 
-        setUpcomingEvents(events);
+        setUpcomingEvents(events)
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error("Error fetching events:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchEvents();
-  }, []);
+    fetchEvents()
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-blue-600 text-white py-20">
+      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Welcome to GDGoC APSIT</h1>
           <p className="text-xl mb-8">Empowering students through technology and innovation</p>
           <Button asChild>
-            <Link href="https://gdg.community.dev/gdg-on-campus-ap-shah-institute-of-technology-thane-india/">Join GDGoC APSIT</Link>
+            <Link href="https://gdg.community.dev/gdg-on-campus-ap-shah-institute-of-technology-thane-india/">
+              Join GDGoC APSIT
+            </Link>
           </Button>
         </div>
       </section>
@@ -56,7 +59,8 @@ export function HomepageComponent() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">Our Mission</h2>
           <p className="text-lg text-center max-w-3xl mx-auto">
-            GDGoC APSIT aims to foster a vibrant community of developers on campus, providing opportunities for learning, collaboration, and growth in the field of technology.
+            GDGoC APSIT aims to foster a vibrant community of developers on campus, providing opportunities for
+            learning, collaboration, and growth in the field of technology.
           </p>
         </div>
       </section>
@@ -99,7 +103,10 @@ export function HomepageComponent() {
                 <CardDescription>October 26, 2024</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>We&apos;re excited to announce our new partnership with Flutter Roadshow, bringing more opportunities to our members!</p>
+                <p>
+                  We&apos;re excited to announce our new partnership with Flutter Roadshow, bringing more opportunities
+                  to our members!
+                </p>
               </CardContent>
             </Card>
             <Card>
@@ -108,7 +115,9 @@ export function HomepageComponent() {
                 <CardDescription>October 20, 2024</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>With over 80+ Completions GDGoC-APSIT has managed to secure a position in Top 10 GDG across India!</p>
+                <p>
+                  With over 80+ Completions GDGoC-APSIT has managed to secure a position in Top 10 GDG across India!
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -145,15 +154,43 @@ export function HomepageComponent() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-blue-600 text-white">
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white"
+      >
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Join Us?</h2>
-          <p className="text-xl mb-8">Become a part of our thriving tech community at APSIT</p>
-          <Button asChild size="lg">
-            <Link href="https://gdg.community.dev/gdg-on-campus-ap-shah-institute-of-technology-thane-india/">Join Us Now</Link>
-          </Button>
+          <motion.h2
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="text-3xl font-bold mb-4"
+          >
+            Ready to Join Us?
+          </motion.h2>
+          <motion.p
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="text-xl mb-8"
+          >
+            Become a part of our thriving tech community at APSIT
+          </motion.p>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+          >
+            <Button asChild size="lg">
+              <Link href="https://gdg.community.dev/gdg-on-campus-ap-shah-institute-of-technology-thane-india/">
+                Join Us Now <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
     </div>
-  );
+  )
 }
+

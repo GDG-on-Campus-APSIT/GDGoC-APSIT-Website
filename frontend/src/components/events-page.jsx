@@ -118,7 +118,7 @@ export function EventsPageComponent() {
             {renderEventGrid(upcomingEvents)}
             {!loading && upcomingEvents.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-xl text-gray-600">We're preparing something exciting for you. Stay tuned!</p>
+                <p className="text-xl text-gray-600">We&apos;re preparing something exciting for you. Stay tuned!</p>
               </div>
             )}
           </TabsContent>
@@ -127,7 +127,7 @@ export function EventsPageComponent() {
             {renderEventGrid(currentEvents)}
             {!loading && currentEvents.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-xl text-gray-600">We'll have ongoing sessions soon. Check back later!</p>
+                <p className="text-xl text-gray-600">We&apos;ll have ongoing sessions soon. Check back later!</p>
               </div>
             )}
           </TabsContent>
