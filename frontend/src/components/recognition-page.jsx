@@ -112,8 +112,8 @@ export function LeaderboardView() {
             index === 0
               ? "order-1 md:order-2 bg-gradient-to-b from-yellow-300 to-yellow-500 text-white shadow-lg rounded-lg p-9 w-15px h-1/4"
               : index === 1
-              ? "order-2 md:order-1 bg-gradient-to-b from-amber-500 to-amber-700 text-white shadow-md rounded-lg p-6 h-1/3 w-12px"
-              : "order-3 bg-gradient-to-b from-gray-300 to-gray-500 text-white shadow-md rounded-lg p-4 w-10px h-1/6"
+              ? "order-2 md:order-1 bg-gradient-to-b from-gray-300 to-gray-500  text-white shadow-md rounded-lg p-6 h-1/3 w-12px"
+              : "order-3 bg-gradient-to-b from-amber-500 to-amber-700 text-white shadow-md rounded-lg p-4 w-10px h-1/6"
           }
 `}
             >
