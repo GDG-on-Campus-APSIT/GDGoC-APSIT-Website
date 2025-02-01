@@ -189,7 +189,7 @@ return (
                   { (
                     <button
                       className="bg-red-600 text-white px-3 py-1 rounded"
-                      onClick={() =>deleteCertificate(cert.certificateId)}
+                      onClick={() =>deleteCertificate(cert.id)}
                     >
                       Rollback
                     </button>
