@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import {
   Dialog,
@@ -17,7 +16,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Papa from "papaparse";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  updateDoc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast, Bounce } from "react-toastify";
 
@@ -27,7 +33,7 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
   const requiredCSVFields = ["name", "email"];
 
   const issue = () =>
-    toast.success("Certiicate issued and emailed successfully!", {
+    toast.success("Certificate issued and emailed successfully!", {
       position: "bottom-right",
       autoClose: 5000,
       hideProgressBar: false,
@@ -45,12 +51,11 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
         header: true,
         skipEmptyLines: true,
         complete: (results) => {
-          const { data, meta } = results;
+          const { meta } = results;
           const uploadedFields = meta.fields || [];
           const missingFields = requiredCSVFields.filter(
             (field) => !uploadedFields.includes(field)
           );
-
           if (missingFields.length > 0) {
             reject(
               `The uploaded file is missing the following required fields: ${missingFields.join(
@@ -58,10 +63,11 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
               )}`
             );
           } else {
-            resolve(true); // Pass parsed data for further processing
+            resolve(true);
           }
         },
-        error: (error) => reject(`Error parsing CSV file: ${error.message}`),
+        error: (error) =>
+          reject(`Error parsing CSV file: ${error.message}`),
       });
     });
   };
@@ -102,51 +108,111 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
       const validParticipants = parsedData.filter(
         (row) => row.name && row.email
       );
+      
 
-      // Create certificates in Firestore and trigger mail
-      const certificatePromises = validParticipants.map(async (participant) => {
-        const uniqueId = `${eventId}-${Date.now()}-${Math.random()
-          .toString(36)
-          .substr(2, 9)}`;
-        const issueDate = new Date().toISOString(); // Current date as ISO string
+      // 1. Create certificate documents in Firestore (without sending emails yet)
+      const certificateDocs = await Promise.all(
+        validParticipants.map(async (participant) => {
+          const uniqueId = `${eventId}-${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}`;
+          const issueDate = new Date().toISOString();
 
-        // Add certificate details to Firestore
-        await addDoc(collection(db, "certificates"), {
-          eventId,
-          eventName,
-          name: participant.name,
-          email: participant.email,
-          certificateId: uniqueId,
-          issueDate, // Store issue date
-        });
+          return {
+            participant,
+            uniqueId,
+            issueDate,
+            docRef: await addDoc(collection(db, "certificates"), {
+              eventId,
+              eventName,
+              name: participant.name,
+              email: participant.email,
+              certificateId: uniqueId,
+              issueDate,
+              sent: false,
+              status: "issued",
+            }),
+          };
+        })
+      );
 
-        // Trigger mail function
-        const mailResponse = await fetch("/api/send-certificate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            recipientName: participant.name,
-            recipientEmail: participant.email,
-            certificateId: uniqueId,
-            eventName,
-          }),
-        });
+      // 2. Now, fetch all relevant certificate documents in a single query
+      const certificateIds = certificateDocs.map((doc) => doc.uniqueId); // Get all ids
+      const certificatesQuery = query(
+        collection(db, "certificates"),
+        where("certificateId", "in", certificateIds) // Efficient batch query
+      );
+      const certificatesSnapshot = await getDocs(certificatesQuery);
+      const existingCertificates = certificatesSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-        if (!mailResponse.ok) {
-          throw new Error(`Failed to send email to ${participant.email}`);
+      // 3. Send emails only for certificates that haven't been sent
+      const emailPromises = certificateDocs.map(async ({
+        participant,
+        uniqueId,
+        docRef,
+      }) => {
+        const existingCert = existingCertificates.find(
+          (cert) => cert.certificateId === uniqueId
+        );
+
+        if (!existingCert || !existingCert.sent) {
+          try {
+            const mailResponse = await fetch("/api/send-certificate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                recipientName: participant.name,
+                recipientEmail: participant.email,
+                certificateId: uniqueId,
+                eventName,
+              }),
+            });
+
+            if (mailResponse.ok) {
+              await updateDoc(docRef, { sent: true });
+              console.log(`Sent to ${participant.email}`);
+            } else {
+              const errorData = await mailResponse.json();
+              console.error(
+                `Failed to send to ${participant.email}:`,
+                errorData
+              );
+              await updateDoc(docRef, {
+                status: "sending_failed",
+                sent: false,
+                error: errorData,
+              });
+              toast.error(
+                `Failed: ${errorData?.message || "Unknown error"}`,
+                { position: "bottom-right" }
+              );
+            }
+          } catch (emailError) {
+            console.error(
+              `Error sending email to ${participant.email}:`,
+              emailError
+            );
+          }
+        } else {
+          toast.success("Certificate already sent.", {autoClose: 5000});
+          console.log(`Certificate ${uniqueId} already sent. Skipping.`);
         }
       });
 
-      await Promise.all(certificatePromises);
+      await Promise.all(emailPromises);
 
-      // alert("Certificates issued and emailed successfully!");
       issue();
       onClose();
     } catch (error) {
       console.error("Error issuing certificates:", error);
-      setError("Failed to process the file or send emails. Please try again.");
+      setError(
+        "Failed to process the file or send emails. Please try again."
+      );
       toast.error(
         "Failed to process the file or send emails. Please try again.",
         { position: "bottom-right" }
@@ -195,13 +261,7 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                onClose();
-              }}
-            >
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
             <Button type="submit">Submit</Button>

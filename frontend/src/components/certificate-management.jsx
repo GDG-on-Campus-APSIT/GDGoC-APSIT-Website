@@ -4,19 +4,30 @@ import { useState, useEffect } from 'react';
 
 //import { Certificate } from './certificate'; // Adjust the import path
 import { db } from '@/lib/firebase'; // Adjust the path based on your setup
-import { collection, getDocs, doc, deleteDoc} from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc,query,where} from 'firebase/firestore';
 import { toast } from 'react-toastify';
 
 export function CertificateManagement(){
     const [certificates, setCertificates] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
+    const [events, setEvents] = useState([])
+    const [selectedEvent, setSelectedEvent] = useState("")
 
+    async function fetchEvents() {
+      const eventsRef = collection(db, "events")
+      const snapshot = await getDocs(eventsRef)
+      return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    }
+  
      // Fetch certificates from Firebase
-  async function fetchCertificatesFromFirebase(status) {
+  async function fetchCertificatesFromFirebase(status,eventName) {
+    
     const certificatesRef = collection(db, 'certificates');
-   // const q = status ? query(certificatesRef, where('status', '==', status)) : certificatesRef;
-    const snapshot = await getDocs(certificatesRef);
+    let q = certificatesRef;
+   if(status){ q= query(q, where('status', '==', status));}
+   if(eventName){q= query(q, where('eventName', '==', eventName))}
+    const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   }
 
@@ -42,13 +53,78 @@ async function deleteCertificate(id) {
   }
 }
 
+// Send certificate via email
+async function sendCertificate(cert) {
+  if (cert.sent) {
+      toast.warn('Certificate has already been sent!', { position: "top-center", autoClose: 3000 });
+      return;
+  }
+
+  try {
+      // Send email logic (using Firebase Functions, SendGrid, or Nodemailer)
+      await sendEmail(cert.email, cert);
+
+      // Update Firestore document to mark it as sent
+      const certRef = doc(db, 'certificates', cert.id);
+      await updateDoc(certRef, { sent: true });
+
+      toast.success('Certificate sent successfully!', { position: "top-center", autoClose: 3000 });
+
+      // Update state to reflect change
+      setCertificates((prev) =>
+          prev.map((c) => (c.id === cert.id ? { ...c, sent: true } : c))
+      );
+  } catch (error) {
+      console.error('Error sending certificate:', error);
+      toast.error('Failed to send certificate.', { position: "top-center", autoClose: 3000 });
+  }
+}
+// Resend certificate via email
+async function resendCertificate(cert) {
+  try {
+      await sendEmail(cert.email, cert); // Re-send logic
+      toast.success('Certificate re-sent successfully!', { position: "top-center", autoClose: 3000 });
+  } catch (error) {
+      console.error('Error re-sending certificate:', error);
+      toast.error('Failed to resend certificate.', { position: "top-center", autoClose: 3000 });
+  }
+}
+
+
+  // useEffect(() => {
+  //   async function fetchCertificates() {
+  //     const data = await fetchCertificatesFromFirebase(statusFilter);
+  //     setCertificates(data);
+  //   }
+  //   fetchCertificates();
+  // }, [statusFilter]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const eventsData = await fetchEvents()
+      setEvents(eventsData)
+
+      if (eventsData.length > 0) {
+        setSelectedEvent(eventsData[0].title)
+      }
+    }
+    fetchData()
+  }, [])
   useEffect(() => {
     async function fetchCertificates() {
-      const data = await fetchCertificatesFromFirebase(statusFilter);
-      setCertificates(data);
+      const selectedEventData = events.find(event => event.title === selectedEvent);
+      const eventName = selectedEventData ? selectedEventData.title : null; // Default if not found
+      const data = await fetchCertificatesFromFirebase(statusFilter, selectedEvent,eventName)
+      setCertificates(data)
     }
-    fetchCertificates();
-  }, [statusFilter]);
+    if (selectedEvent) {
+      fetchCertificates()
+    }
+  }, [statusFilter, selectedEvent,events])
+
+  const handleEventChange = (e) => {
+    setSelectedEvent(e.target.value)
+  }
 
 return (
  (
@@ -57,6 +133,15 @@ return (
       <h1 className="text-2xl font-bold">Certificate Management</h1>
     <a href='/admin/events'><button className="bg-blue-600 text-white px-4 py-2 rounded">Issue New Certificate</button></a>
     </header>
+    <div className="mb-4">
+        <select className="border px-4 py-2 rounded w-full" value={selectedEvent} onChange={handleEventChange}>
+          {events.map((event) => (
+            <option key={event.id} value={event.title}>
+              {event.title}
+            </option>
+          ))}
+        </select>
+      </div>
 
     <div className="flex mb-4 space-x-4">
         <input
@@ -80,6 +165,7 @@ return (
       <table className="min-w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-100">
+            <th className="border p-2">S/N</th>
             <th className="border p-2">ID</th>
             <th className="border p-2">Name</th>
             <th className="border p-2">Email</th>
@@ -91,8 +177,9 @@ return (
         <tbody>
           {certificates
             .filter((cert) => cert.name.toLowerCase().includes(searchQuery.toLowerCase()) || cert.certificateId.includes(searchQuery))
-            .map((cert) => (
+            .map((cert , index) => (
               <tr key={cert.id} className="hover:bg-gray-50">
+                <td className="border p-2">{index + 1}</td> {/* S/N cell */}
                 <td className="border p-2">{cert.certificateId}</td>
                 <td className="border p-2">{cert.name}</td>
                 <td className="border p-2">{cert.email}</td>
