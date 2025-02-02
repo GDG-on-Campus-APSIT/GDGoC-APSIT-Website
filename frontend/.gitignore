@@ -38,3 +38,11 @@ next-env.d.ts
 
 #node modules
 .node_modules
+
+# Service worker files
+sw.js
+sw.js.map
+
+# Workbox files
+workbox-*.js
+workbox-*.js.map

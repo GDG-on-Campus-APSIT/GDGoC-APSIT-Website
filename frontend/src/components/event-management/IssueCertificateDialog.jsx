@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -17,28 +16,26 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Papa from "papaparse";
-import { addDoc, collection } from "firebase/firestore";
+import { Progress } from "@/components/ui/progress";
+import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast, Bounce } from "react-toastify";
+import Papa from "papaparse";
 
 export function IssueCertificateDialog({ eventId, eventName, onClose }) {
   const [csvFile, setCsvFile] = useState(null);
   const [error, setError] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [processingSummary, setProcessingSummary] = useState({
+    total: 0,
+    processed: 0,
+    issued: 0,
+    duplicates: [],
+    errors: []
+  });
+  
   const requiredCSVFields = ["name", "email"];
-
-  const issue = () =>
-    toast.success("Certiicate issued and emailed successfully!", {
-      position: "bottom-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
-    });
 
   const validateCSVFile = (file) => {
     return new Promise((resolve, reject) => {
@@ -59,7 +56,7 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
               )}`
             );
           } else {
-            resolve(true); // Pass parsed data for further processing
+            resolve(data);
           }
         },
         error: (error) => reject(`Error parsing CSV file: ${error.message}`),
@@ -67,14 +64,46 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
     });
   };
 
+  const checkForExistingCertificate = async (email) => {
+    const certificatesRef = collection(db, "certificates");
+    const q = query(
+      certificatesRef,
+      where("eventId", "==", eventId),
+      where("email", "==", email)
+    );
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  };
+
+  const downloadResultsCSV = (originalData, results) => {
+    const csvData = originalData.map(row => ({
+      ...row,
+      status: results.duplicates.includes(row.email) 
+        ? 'duplicate' 
+        : results.errors.find(e => e.email === row.email) 
+          ? 'error' 
+          : 'issued'
+    }));
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `certificate_issuance_results_${eventName}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleFileChange = async (e) => {
-    e.preventDefault();
     const file = e.target.files[0];
     if (!file) return;
     try {
-      await validateCSVFile(file);
+      const parsedData = await validateCSVFile(file);
       setCsvFile(file);
       setError(null);
+      setProcessingSummary(prev => ({ ...prev, total: parsedData.length }));
     } catch (error) {
       setError(error);
       setCsvFile(null);
@@ -83,75 +112,97 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!csvFile) {
       setError("Please upload a CSV file.");
       return;
     }
 
+    setIsProcessing(true);
+    setProgress(0);
+
     try {
-      // Parse CSV file
-      const parsedData = await new Promise((resolve, reject) => {
-        Papa.parse(csvFile, {
-          header: true,
-          complete: (results) => resolve(results.data),
-          error: (error) => reject(error),
-        });
-      });
+      const parsedData = await validateCSVFile(csvFile);
+      const results = {
+        total: parsedData.length,
+        processed: 0,
+        issued: 0,
+        duplicates: [],
+        errors: []
+      };
 
-      // Filter valid participants
-      const validParticipants = parsedData.filter(
-        (row) => row.name && row.email
-      );
+      for (const participant of parsedData) {
+        try {
+          const isDuplicate = await checkForExistingCertificate(participant.email);
+          
+          if (isDuplicate) {
+            results.duplicates.push(participant.email);
+          } else {
+            const uniqueId = `${eventId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const issueDate = new Date().toISOString();
 
-      // Create certificates in Firestore and trigger mail
-      const certificatePromises = validParticipants.map(async (participant) => {
-        const uniqueId = `${eventId}-${Date.now()}-${Math.random()
-          .toString(36)
-          .substr(2, 9)}`;
-        const issueDate = new Date().toISOString(); // Current date as ISO string
+            await addDoc(collection(db, "certificates"), {
+              eventId,
+              eventName,
+              name: participant.name,
+              email: participant.email,
+              certificateId: uniqueId,
+              issueDate,
+              status: 'active'
+            });
 
-        // Add certificate details to Firestore
-        await addDoc(collection(db, "certificates"), {
-          eventId,
-          eventName,
-          name: participant.name,
-          email: participant.email,
-          certificateId: uniqueId,
-          issueDate, // Store issue date
-        });
+            const mailResponse = await fetch("/api/send-certificate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                recipientName: participant.name,
+                recipientEmail: participant.email,
+                certificateId: uniqueId,
+                eventName,
+              }),
+            });
 
-        // Trigger mail function
-        const mailResponse = await fetch("/api/send-certificate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            recipientName: participant.name,
-            recipientEmail: participant.email,
-            certificateId: uniqueId,
-            eventName,
-          }),
-        });
+            if (!mailResponse.ok) {
+              throw new Error(`Failed to send email to ${participant.email}`);
+            }
 
-        if (!mailResponse.ok) {
-          throw new Error(`Failed to send email to ${participant.email}`);
+            results.issued++;
+          }
+        } catch (error) {
+          results.errors.push({
+            email: participant.email,
+            error: error.message
+          });
         }
+
+        results.processed++;
+        const progressPercent = (results.processed / results.total) * 100;
+        setProgress(progressPercent);
+        setProcessingSummary(results);
+      }
+
+      // Download results CSV
+      downloadResultsCSV(parsedData, results);
+
+      // Show completion toast
+      toast.success(`Processing complete:
+        ${results.issued} certificates issued,
+        ${results.duplicates.length} duplicates skipped,
+        ${results.errors.length} errors`, {
+        position: "bottom-right",
+        autoClose: 5000
       });
 
-      await Promise.all(certificatePromises);
-
-      // alert("Certificates issued and emailed successfully!");
-      issue();
-      onClose();
+      if (results.errors.length === 0 && results.duplicates.length === 0) {
+        onClose();
+      }
     } catch (error) {
-      console.error("Error issuing certificates:", error);
-      setError("Failed to process the file or send emails. Please try again.");
-      toast.error(
-        "Failed to process the file or send emails. Please try again.",
-        { position: "bottom-right" }
-      );
+      console.error("Error processing certificates:", error);
+      setError("Failed to process the file. Please try again.");
+      toast.error("Processing failed. Please try again.", {
+        position: "bottom-right"
+      });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -192,20 +243,56 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
               type="file"
               accept=".csv"
               onChange={handleFileChange}
+              disabled={isProcessing}
             />
           </div>
+
+          {isProcessing && (
+            <div className="space-y-2">
+              <Progress value={progress} className="w-full" />
+              <p className="text-sm text-gray-500">
+                Processed: {processingSummary.processed} / {processingSummary.total}
+              </p>
+              <p className="text-sm text-green-500">
+                Issued: {processingSummary.issued}
+              </p>
+              {processingSummary.duplicates.length > 0 && (
+                <div className="text-sm text-yellow-500">
+                  <p>Duplicates: {processingSummary.duplicates.length}</p>
+                  <ul className="text-xs mt-1 ml-4">
+                    {processingSummary.duplicates.map((email, i) => (
+                      <li key={i}>{email}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {processingSummary.errors.length > 0 && (
+                <div className="text-sm text-red-500">
+                  <p>Errors: {processingSummary.errors.length}</p>
+                  <ul className="text-xs mt-1 ml-4">
+                    {processingSummary.errors.map((error, i) => (
+                      <li key={i}>{error.email}: {error.error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
           {error && <p className="text-red-500">{error}</p>}
+          
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                onClose();
-              }}
+              onClick={onClose}
+              disabled={isProcessing}
             >
               Cancel
             </Button>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={!csvFile || isProcessing}>
+              {isProcessing ? "Processing..." : "Submit"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
