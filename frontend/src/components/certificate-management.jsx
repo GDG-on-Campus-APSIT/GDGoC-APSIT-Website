@@ -2,8 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc, query, where, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function CertificateManagement() {
     const [certificates, setCertificates] = useState([]);
@@ -12,6 +16,14 @@ export function CertificateManagement() {
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState("");
     const [isResending, setIsResending] = useState({});
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingCertificate, setEditingCertificate] = useState(null);
+    const [editForm, setEditForm] = useState({
+        name: '',
+        email: '',
+        eventName: '',
+        certificateId: ''
+    });
 
     async function fetchEvents() {
       const eventsRef = collection(db, "events");
@@ -40,6 +52,53 @@ export function CertificateManagement() {
       } catch (err) {
         console.error('Error deleting certificate:', err);
         toast.warn('Failed to delete the certificate.', {position: "top-center", autoClose: 3000});
+      }
+    }
+
+    async function updateCertificate() {
+      if (!editingCertificate) return;
+      
+      try {
+        // Check if certificate ID already exists (if it was changed)
+        if (editingCertificate.certificateId !== editForm.certificateId) {
+          const certificatesRef = collection(db, 'certificates');
+          const q = query(certificatesRef, where('certificateId', '==', editForm.certificateId));
+          const snapshot = await getDocs(q);
+          
+          if (!snapshot.empty) {
+            toast.error('Certificate ID already exists. Please choose a different ID.', {
+              position: "top-center",
+              autoClose: 3000
+            });
+            return;
+          }
+        }
+
+        const certRef = doc(db, 'certificates', editingCertificate.id);
+        await updateDoc(certRef, {
+          name: editForm.name,
+          email: editForm.email,
+          eventName: editForm.eventName,
+          certificateId: editForm.certificateId
+        });
+        
+        setCertificates(prev => prev.map(cert => 
+          cert.id === editingCertificate.id 
+            ? { 
+                ...cert, 
+                name: editForm.name, 
+                email: editForm.email, 
+                eventName: editForm.eventName,
+                certificateId: editForm.certificateId
+              }
+            : cert
+        ));
+        
+        toast.success('Certificate updated successfully!', {position: "top-center", autoClose: 3000});
+        setIsEditModalOpen(false);
+      } catch (err) {
+        console.error('Error updating certificate:', err);
+        toast.error('Failed to update the certificate.', {position: "top-center", autoClose: 3000});
       }
     }
 
@@ -78,6 +137,17 @@ export function CertificateManagement() {
       }
     }
 
+    function handleEdit(certificate) {
+      setEditingCertificate(certificate);
+      setEditForm({
+        name: certificate.name,
+        email: certificate.email,
+        eventName: certificate.eventName,
+        certificateId: certificate.certificateId
+      });
+      setIsEditModalOpen(true);
+    }
+
     useEffect(() => {
       async function fetchData() {
         const eventsData = await fetchEvents();
@@ -110,10 +180,19 @@ export function CertificateManagement() {
       <div className="p-6">
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Certificate Management</h1>
-          <a href='/admin/events'><button className="bg-blue-600 text-white px-4 py-2 rounded">Issue New Certificate</button></a>
+          <a href='/admin/events'>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Issue New Certificate
+            </button>
+          </a>
         </header>
+
         <div className="mb-4">
-          <select className="border px-4 py-2 rounded w-full" value={selectedEvent} onChange={handleEventChange}>
+          <select 
+            className="border px-4 py-2 rounded w-full" 
+            value={selectedEvent} 
+            onChange={handleEventChange}
+          >
             {events.map((event) => (
               <option key={event.id} value={event.title}>
                 {event.title}
@@ -156,7 +235,10 @@ export function CertificateManagement() {
             </thead>
             <tbody>
               {certificates
-                .filter((cert) => cert.name.toLowerCase().includes(searchQuery.toLowerCase()) || cert.certificateId.includes(searchQuery))
+                .filter((cert) => 
+                  cert.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                  cert.certificateId.includes(searchQuery)
+                )
                 .map((cert, index) => (
                   <tr key={cert.id} className="hover:bg-gray-50">
                     <td className="border p-2">{index + 1}</td>
@@ -167,15 +249,23 @@ export function CertificateManagement() {
                     <td className="border p-2">{cert.eventName}</td>
                     <td className="border p-2 space-x-2">
                       <a 
-                        href={`/certificate/${cert.id}`}
+                        href={`/certificate/${cert.certificateId}`}
                         className="inline-block bg-blue-600 text-white px-3 py-1 rounded mr-2 hover:bg-blue-700"
                       >
                         View
                       </a>
                       <button
-                        className={`px-3 py-1 rounded mr-2 ${isResending[cert.id] 
-                          ? 'bg-gray-400 text-white cursor-not-allowed' 
-                          : 'bg-green-600 text-white hover:bg-green-700'}`}
+                        className="bg-yellow-600 text-white px-3 py-1 rounded mr-2 hover:bg-yellow-700"
+                        onClick={() => handleEdit(cert)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className={`px-3 py-1 rounded mr-2 ${
+                          isResending[cert.id] 
+                            ? 'bg-gray-400 text-white cursor-not-allowed' 
+                            : 'bg-green-600 text-white hover:bg-green-700'
+                        }`}
                         onClick={() => resendCertificateEmail(cert)}
                         disabled={isResending[cert.id]}
                       >
@@ -193,6 +283,64 @@ export function CertificateManagement() {
             </tbody>
           </table>
         </div>
+
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Certificate</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="certificateId">Certificate ID</Label>
+                <Input
+                  id="certificateId"
+                  value={editForm.certificateId}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, certificateId: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="event">Event</Label>
+                <select
+                  id="event"
+                  className="w-full border rounded px-3 py-2"
+                  value={editForm.eventName}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, eventName: e.target.value }))}
+                >
+                  {events.map((event) => (
+                    <option key={event.id} value={event.title}>
+                      {event.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={updateCertificate}>
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
 }

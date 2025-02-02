@@ -1,14 +1,14 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Certificate from "@/components/certificate"
 import { db } from "@/lib/firebase"
 import { collection, query, where, getDocs } from "firebase/firestore"
 import { NavbarComponent } from "@/components/navbar"
+import { Shield, Loader2, Smartphone } from "lucide-react"
 import { toast, Bounce } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { CongratulationsPopUp } from "@/components/congratulations-popup"
-import { Shield, Loader2, Smartphone } from "lucide-react"
+import Certificate from "@/components/certificate"
+import SQLCertificate from "@/components/certificates/SQLCertificate"
 
 export default function CertificatePage({ params }) {
   const { certificateId } = params
@@ -18,29 +18,12 @@ export default function CertificatePage({ params }) {
   const [isLandscape, setIsLandscape] = useState(true)
 
   useEffect(() => {
-    const handleOrientationChange = () => {
-      const isLandscapeMode = window.matchMedia("(orientation: landscape)").matches
-      setIsLandscape(isLandscapeMode)
-      if (!isLandscapeMode) {
-        toast.info("Please switch to landscape mode for the best viewing experience.", {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "light",
-          transition: Bounce,
-        })
-      }
+    const handleResize = () => {
+      setIsLandscape(window.innerWidth > window.innerHeight)
     }
-
-    window.addEventListener("resize", handleOrientationChange)
-    handleOrientationChange()
-
-    return () => {
-      window.removeEventListener("resize", handleOrientationChange)
-    }
+    window.addEventListener("resize", handleResize)
+    handleResize()
+    return () => window.removeEventListener("resize", handleResize)
   }, [])
 
   useEffect(() => {
@@ -106,27 +89,22 @@ export default function CertificatePage({ params }) {
     )
   }
 
-  const { name: recipientName, eventId, email, issueDate } = certificateData
+  const { name: recipientName, eventId, email, issueDate, type } = certificateData
+  const verificationUrl = `https://gdgoc-apsit.vercel.app/verify/${certificateId}`
 
-  const verificationUrl = `https://gdgoc-apsit.vercel.app//verify/${certificateId}`
-  const description = `In recognition of his/her hard work and dedication shown in obtaining all the 15 skill badges and finishing 1 arcade of Google Gen AI Study Jam 2024, held by GDG On Campus APSIT`
-
-  return (
-    <>
-      <CongratulationsPopUp />
-      <NavbarComponent />
-      {!isLandscape ? (
-        <div className="flex flex-col justify-center items-center h-screen text-center p-4">
-          <div className="animate-rotate-device mb-6">
-            <Smartphone className="w-16 h-16 text-blue-500" />
-          </div>
-          <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md shadow-md max-w-md">
-            <p className="text-lg font-medium">
-              Please rotate your device to landscape mode to view the certificate properly.
-            </p>
-          </div>
-        </div>
-      ) : (
+  const renderCertificate = () => {
+    if (eventId === "4hJkqz3lGlI5IEotiZyk") {
+      return (
+        <SQLCertificate
+          recipientName={recipientName}
+          type={type}
+          date={new Date(issueDate).toLocaleDateString()}
+          verificationUrl={verificationUrl}
+        />
+      )
+    } else {
+      // Assuming this is for Study Jam
+      return (
         <Certificate
           recipientName={recipientName}
           courseName={`Event: ${eventId}`}
@@ -142,8 +120,28 @@ export default function CertificatePage({ params }) {
           facultySignature="/signs/rushikesh_sir_sign.jpg"
           mentorSignature="/signs/jishan_sign.png"
           verificationUrl={verificationUrl}
-          description={description}
+          description="In recognition of his/her hard work and dedication shown in obtaining all the 15 skill badges and finishing 1 arcade of Google Gen AI Study Jam 2024, held by GDG On Campus APSIT"
         />
+      )
+    }
+  }
+
+  return (
+    <>
+      <NavbarComponent />
+      {!isLandscape ? (
+        <div className="flex flex-col justify-center items-center h-screen text-center p-4">
+          <div className="animate-rotate-device mb-6">
+            <Smartphone className="w-16 h-16 text-blue-500" />
+          </div>
+          <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md shadow-md max-w-md">
+            <p className="text-lg font-medium">
+              Please rotate your device to landscape mode to view the certificate properly.
+            </p>
+          </div>
+        </div>
+      ) : (
+        renderCertificate()
       )}
     </>
   )

@@ -14,16 +14,24 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 import Papa from "papaparse";
 
 export function IssueCertificateDialog({ eventId, eventName, onClose }) {
   const [csvFile, setCsvFile] = useState(null);
+  const [certificateType, setCertificateType] = useState("");
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -36,6 +44,14 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
   });
   
   const requiredCSVFields = ["name", "email"];
+  
+  const certificateTypes = [
+    "Completion",
+    "Attendance",
+    "Volunteering",
+    "Speaker",
+    "Excellence"
+  ];
 
   const validateCSVFile = (file) => {
     return new Promise((resolve, reject) => {
@@ -69,7 +85,8 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
     const q = query(
       certificatesRef,
       where("eventId", "==", eventId),
-      where("email", "==", email)
+      where("email", "==", email),
+      where("type", "==", certificateType)
     );
     const querySnapshot = await getDocs(q);
     return !querySnapshot.empty;
@@ -78,6 +95,7 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
   const downloadResultsCSV = (originalData, results) => {
     const csvData = originalData.map(row => ({
       ...row,
+      certificateType,
       status: results.duplicates.includes(row.email) 
         ? 'duplicate' 
         : results.errors.find(e => e.email === row.email) 
@@ -116,6 +134,11 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
       setError("Please upload a CSV file.");
       return;
     }
+    
+    if (!certificateType) {
+      setError("Please select a certificate type.");
+      return;
+    }
 
     setIsProcessing(true);
     setProgress(0);
@@ -146,6 +169,7 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
               name: participant.name,
               email: participant.email,
               certificateId: uniqueId,
+              type: certificateType,
               issueDate,
               status: 'active'
             });
@@ -158,6 +182,7 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
                 recipientEmail: participant.email,
                 certificateId: uniqueId,
                 eventName,
+                certificateType,
               }),
             });
 
@@ -180,10 +205,8 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
         setProcessingSummary(results);
       }
 
-      // Download results CSV
       downloadResultsCSV(parsedData, results);
 
-      // Show completion toast
       toast.success(`Processing complete:
         ${results.issued} certificates issued,
         ${results.duplicates.length} duplicates skipped,
@@ -213,7 +236,29 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
           <DialogTitle>Issue Certificates</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="certificate-type" className="block mb-2">
+                Certificate Type
+              </label>
+              <Select
+                value={certificateType}
+                onValueChange={setCertificateType}
+                disabled={isProcessing}
+              >
+                <SelectTrigger id="certificate-type">
+                  <SelectValue placeholder="Select certificate type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {certificateTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <Accordion type="single" collapsible>
               <AccordionItem value="required-fields">
                 <AccordionTrigger className="text-sm text-gray-400">
@@ -228,23 +273,26 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-            <div className="flex justify-between items-center">
-              <label htmlFor="file-input">Upload File</label>
-              <a
-                href="/certificate-template.csv"
-                download
-                className="text-blue-400 text-sm underline"
-              >
-                Download Template
-              </a>
+            
+            <div>
+              <div className="flex justify-between items-center">
+                <label htmlFor="file-input">Upload File</label>
+                <a
+                  href="/certificate-template.csv"
+                  download
+                  className="text-blue-400 text-sm underline"
+                >
+                  Download Template
+                </a>
+              </div>
+              <Input
+                id="file-input"
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                disabled={isProcessing}
+              />
             </div>
-            <Input
-              id="file-input"
-              type="file"
-              accept=".csv"
-              onChange={handleFileChange}
-              disabled={isProcessing}
-            />
           </div>
 
           {isProcessing && (
@@ -290,7 +338,10 @@ export function IssueCertificateDialog({ eventId, eventName, onClose }) {
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!csvFile || isProcessing}>
+            <Button 
+              type="submit" 
+              disabled={!csvFile || !certificateType || isProcessing}
+            >
               {isProcessing ? "Processing..." : "Submit"}
             </Button>
           </DialogFooter>

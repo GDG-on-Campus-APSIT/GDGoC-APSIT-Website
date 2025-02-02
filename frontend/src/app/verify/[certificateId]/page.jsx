@@ -1,12 +1,14 @@
 "use client"
+
 import { useEffect, useState } from "react"
-import Certificate from "@/components/certificate"
 import { db } from "@/lib/firebase"
 import { collection, query, where, getDocs } from "firebase/firestore"
 import { NavbarComponent } from "@/components/navbar"
 import { Shield, ShieldCheck, Loader2, Smartphone } from "lucide-react"
 import { motion } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
+import Certificate from "@/components/certificate"
+import SQLCertificate from "@/components/certificates/SQLCertificate"
 
 export default function VerifyPage({ params }) {
   const { certificateId } = params
@@ -96,9 +98,8 @@ export default function VerifyPage({ params }) {
     )
   }
 
-  const { name: recipientName,eventId, eventName, email, issueDate } = certificateData
+  const { name: recipientName, eventId, eventName, email, issueDate, type } = certificateData
   const verificationUrl = `https://gdgoc-apsit.vercel.app/verify/${certificateId}`
-  const description = `In recognition of his/her hardwork and dedication shown in obtaining all the 15 skill badges and finishing 1 arcade of Google Gen AI Study Jam 2024, held by GDG On Campus APSIT`
 
   return (
     <>
@@ -152,38 +153,51 @@ export default function VerifyPage({ params }) {
                 <p className="text-lg font-semibold text-gray-900">{email}</p>
               </div>
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-gray-500">Verification URL</h3>
-                <p className="text-lg font-semibold text-blue-600 break-all">
-                  <a href={verificationUrl} target="_blank" rel="noopener noreferrer">
-                    {verificationUrl}
-                  </a>
+                <h3 className="text-sm font-medium text-gray-500">Certificate Type</h3>
+                <p className="text-lg font-semibold text-gray-900">
+                  {eventId === "4hJkqz3lGlI5IEotiZyk"
+                    ? `SQL Mastery Bootcamp - ${type}`
+                    : "Google Gen AI Study Jam 2024"}
                 </p>
               </div>
             </div>
             <div className="mt-6">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Description</h3>
-              <p className="text-gray-700">{description}</p>
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Verification URL</h3>
+              <p className="text-lg font-semibold text-blue-600 break-all">
+                <a href={verificationUrl} target="_blank" rel="noopener noreferrer">
+                  {verificationUrl}
+                </a>
+              </p>
             </div>
           </motion.div>
           {isLandscape ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-              <Certificate
-                recipientName={recipientName}
-                courseName={`Event: ${eventId}`}
-                date={new Date(issueDate).toLocaleDateString()}
-                organizerName="Yash Agrawal"
-                organizerTitle="Organizer"
-                facultyName="Prof. Rushikesh Nikam"
-                facultyTitle="Faculty Advisor"
-                mentorName="Jishanahmed Shaikh"
-                mentorTitle="Cloud Head"
-                groupLogo="/GDG_logo_horizontal.png"
-                organizerSignature="/signs/yash_sign.jpg"
-                facultySignature="/signs/rushikesh_sir_sign.jpg"
-                mentorSignature="/signs/jishan_sign.png"
-                verificationUrl={verificationUrl}
-                description={description}
-              />
+              {eventId === "4hJkqz3lGlI5IEotiZyk" ? (
+                <SQLCertificate
+                  recipientName={recipientName}
+                  type={type}
+                  date={new Date(issueDate).toLocaleDateString()}
+                  verificationUrl={verificationUrl}
+                />
+              ) : (
+                <Certificate
+                  recipientName={recipientName}
+                  courseName={`Event: ${eventId}`}
+                  date={new Date(issueDate).toLocaleDateString()}
+                  organizerName="Yash Agrawal"
+                  organizerTitle="Organizer"
+                  facultyName="Prof. Rushikesh Nikam"
+                  facultyTitle="Faculty Advisor"
+                  mentorName="Jishanahmed Shaikh"
+                  mentorTitle="Cloud Head"
+                  groupLogo="/GDG_logo_horizontal.png"
+                  organizerSignature="/signs/yash_sign.jpg"
+                  facultySignature="/signs/rushikesh_sir_sign.jpg"
+                  mentorSignature="/signs/jishan_sign.png"
+                  verificationUrl={verificationUrl}
+                  description="In recognition of his/her hard work and dedication shown in obtaining all the 15 skill badges and finishing 1 arcade of Google Gen AI Study Jam 2024, held by GDG On Campus APSIT"
+                />
+              )}
             </motion.div>
           ) : (
             <div className="flex flex-col justify-center items-center text-center p-4">
