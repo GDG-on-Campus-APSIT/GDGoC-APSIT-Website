@@ -4,19 +4,30 @@ import { useState, useEffect } from 'react';
 
 //import { Certificate } from './certificate'; // Adjust the import path
 import { db } from '@/lib/firebase'; // Adjust the path based on your setup
-import { collection, getDocs, doc, deleteDoc} from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc,query,where} from 'firebase/firestore';
 import { toast } from 'react-toastify';
 
 export function CertificateManagement(){
     const [certificates, setCertificates] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
+    const [events, setEvents] = useState([])
+    const [selectedEvent, setSelectedEvent] = useState("")
 
+    async function fetchEvents() {
+      const eventsRef = collection(db, "events")
+      const snapshot = await getDocs(eventsRef)
+      return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    }
+  
      // Fetch certificates from Firebase
-  async function fetchCertificatesFromFirebase(status) {
+  async function fetchCertificatesFromFirebase(status,eventName) {
+    
     const certificatesRef = collection(db, 'certificates');
-   // const q = status ? query(certificatesRef, where('status', '==', status)) : certificatesRef;
-    const snapshot = await getDocs(certificatesRef);
+    let q = certificatesRef;
+   if(status){ q= query(q, where('status', '==', status));}
+   if(eventName){q= query(q, where('eventName', '==', eventName))}
+    const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   }
 
@@ -43,12 +54,31 @@ async function deleteCertificate(id) {
 }
 
   useEffect(() => {
-    async function fetchCertificates() {
-      const data = await fetchCertificatesFromFirebase(statusFilter);
-      setCertificates(data);
+    async function fetchData() {
+      const eventsData = await fetchEvents()
+      setEvents(eventsData)
+
+      if (eventsData.length > 0) {
+        setSelectedEvent(eventsData[0].title)
+      }
     }
-    fetchCertificates();
-  }, [statusFilter]);
+    fetchData()
+  }, [])
+  useEffect(() => {
+    async function fetchCertificates() {
+      const selectedEventData = events.find(event => event.title === selectedEvent);
+      const eventName = selectedEventData ? selectedEventData.title : null; // Default if not found
+      const data = await fetchCertificatesFromFirebase(statusFilter, selectedEvent,eventName)
+      setCertificates(data)
+    }
+    if (selectedEvent) {
+      fetchCertificates()
+    }
+  }, [statusFilter, selectedEvent,events])
+
+  const handleEventChange = (e) => {
+    setSelectedEvent(e.target.value)
+  }
 
 return (
  (
@@ -57,6 +87,15 @@ return (
       <h1 className="text-2xl font-bold">Certificate Management</h1>
     <a href='/admin/events'><button className="bg-blue-600 text-white px-4 py-2 rounded">Issue New Certificate</button></a>
     </header>
+    <div className="mb-4">
+        <select className="border px-4 py-2 rounded w-full" value={selectedEvent} onChange={handleEventChange}>
+          {events.map((event) => (
+            <option key={event.id} value={event.title}>
+              {event.title}
+            </option>
+          ))}
+        </select>
+      </div>
 
     <div className="flex mb-4 space-x-4">
         <input
@@ -80,6 +119,7 @@ return (
       <table className="min-w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-100">
+            <th className="border p-2">S/N</th>
             <th className="border p-2">ID</th>
             <th className="border p-2">Name</th>
             <th className="border p-2">Email</th>
@@ -91,8 +131,9 @@ return (
         <tbody>
           {certificates
             .filter((cert) => cert.name.toLowerCase().includes(searchQuery.toLowerCase()) || cert.certificateId.includes(searchQuery))
-            .map((cert) => (
+            .map((cert , index) => (
               <tr key={cert.id} className="hover:bg-gray-50">
+                <td className="border p-2">{index + 1}</td> {/* S/N cell */}
                 <td className="border p-2">{cert.certificateId}</td>
                 <td className="border p-2">{cert.name}</td>
                 <td className="border p-2">{cert.email}</td>
@@ -102,7 +143,7 @@ return (
                   { (
                     <button
                       className="bg-red-600 text-white px-3 py-1 rounded"
-                      onClick={() =>deleteCertificate(cert.certificateId)}
+                      onClick={() =>deleteCertificate(cert.id)}
                     >
                       Rollback
                     </button>
