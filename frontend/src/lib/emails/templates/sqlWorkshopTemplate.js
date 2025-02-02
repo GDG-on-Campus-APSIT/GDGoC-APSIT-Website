@@ -12,7 +12,7 @@ export function sqlWorkshopTemplate({ recipientName, certificateUrl, eventName }
       <div style="max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
         <div style="text-align: center;">
           <img src="${process.env.BASE_URL}/GDG_logo_horizontal.png" alt="GDG Email Header" style="width: 100%; height: auto; display: block; margin-bottom: 20px;">
-          <h1 style="margin: 0; font-size: 24px; font-weight: 600; color: #4285f4;">Congratulations, ${recipientName}!</h1>
+          <h1 style="margin: 0; font-size: 24px; font-weight: 600; color: #0f9d58;">Congratulations, ${recipientName}!</h1>
         </div>
         <div style="padding: 30px; line-height: 1.6; color: #333;">
           <p style="margin-top: 0;">Dear <strong>${recipientName}</strong>,</p>
