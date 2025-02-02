@@ -53,52 +53,6 @@ async function deleteCertificate(id) {
   }
 }
 
-// Send certificate via email
-async function sendCertificate(cert) {
-  if (cert.sent) {
-      toast.warn('Certificate has already been sent!', { position: "top-center", autoClose: 3000 });
-      return;
-  }
-
-  try {
-      // Send email logic (using Firebase Functions, SendGrid, or Nodemailer)
-      await sendEmail(cert.email, cert);
-
-      // Update Firestore document to mark it as sent
-      const certRef = doc(db, 'certificates', cert.id);
-      await updateDoc(certRef, { sent: true });
-
-      toast.success('Certificate sent successfully!', { position: "top-center", autoClose: 3000 });
-
-      // Update state to reflect change
-      setCertificates((prev) =>
-          prev.map((c) => (c.id === cert.id ? { ...c, sent: true } : c))
-      );
-  } catch (error) {
-      console.error('Error sending certificate:', error);
-      toast.error('Failed to send certificate.', { position: "top-center", autoClose: 3000 });
-  }
-}
-// Resend certificate via email
-async function resendCertificate(cert) {
-  try {
-      await sendEmail(cert.email, cert); // Re-send logic
-      toast.success('Certificate re-sent successfully!', { position: "top-center", autoClose: 3000 });
-  } catch (error) {
-      console.error('Error re-sending certificate:', error);
-      toast.error('Failed to resend certificate.', { position: "top-center", autoClose: 3000 });
-  }
-}
-
-
-  // useEffect(() => {
-  //   async function fetchCertificates() {
-  //     const data = await fetchCertificatesFromFirebase(statusFilter);
-  //     setCertificates(data);
-  //   }
-  //   fetchCertificates();
-  // }, [statusFilter]);
-
   useEffect(() => {
     async function fetchData() {
       const eventsData = await fetchEvents()
