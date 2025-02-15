@@ -32,7 +32,7 @@ const SQLCertificate = ({ recipientName, type, date, verificationUrl, eventName 
     Excellence:
       "For successfully completing the SQL Mastery Bootcamp with excellence, showcasing outstanding skills and dedication.",
     Speaker:
-      "For delivering a valuable session as a speaker at the SQL Mastery Bootcamp, inspiring and educating participants.",
+      "For delivering an impactful session at the SQL Mastery Bootcamp, demonstrating outstanding expertise and a commitment to knowledge sharing that significantly benefited all participants.",
   }
 
   return (
